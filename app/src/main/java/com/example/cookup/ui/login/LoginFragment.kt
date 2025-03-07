@@ -1,5 +1,7 @@
 package com.example.cookup.ui.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.cookup.MainActivity
 import com.example.cookup.R
 import com.google.android.material.textfield.TextInputLayout
 
@@ -52,11 +55,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewModel.loginStatus.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT).show()
+                val sharedPref = requireActivity().getSharedPreferences("CookUpPrefs", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putBoolean("isLoggedIn", true)
+                    apply()
+                }
+
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
             } else {
-                Toast.makeText(requireContext(), "Invalid Credentials", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "שם משתמש או סיסמה אינם נכונים", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         view.findViewById<TextView>(R.id.tvSignUp).setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_signupFragment)

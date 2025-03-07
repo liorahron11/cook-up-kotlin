@@ -64,10 +64,10 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
 
         viewModel.signupStatus.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                Toast.makeText(requireContext(), "Signup Successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "נרשמת בהצלחה", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_signupFragment_to_loginFragment)
             } else {
-                Toast.makeText(requireContext(), "Signup Failed: Fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "יש למלא את כל הפרטים", Toast.LENGTH_SHORT).show()
             }
         }
 

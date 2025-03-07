@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/loginFragment">
 
     <fragment
@@ -10,7 +8,7 @@
         android:label="Login">
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
-            app:destination="@id/signupFragment"/>
+            app:destination="@id/signupFragment" />
     </fragment>
 
     <fragment
@@ -19,7 +17,7 @@
         android:label="Signup">
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
-            app:destination="@id/loginFragment"/>
+            app:destination="@id/loginFragment" />
     </fragment>
 
 </navigation>

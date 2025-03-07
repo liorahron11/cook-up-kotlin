@@ -24,6 +24,6 @@ class LoginViewModel : ViewModel() {
     }
 
     fun login() {
-        _loginStatus.value = (_email.value == "user@example.com" && _password.value == "password123")
+        _loginStatus.value = (_email.value == "lior@gmail.com" && _password.value == "1234")
     }
 }
