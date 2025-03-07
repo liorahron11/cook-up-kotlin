@@ -3,76 +3,63 @@ package com.example.cookup.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cookup.MainActivity
 import com.example.cookup.R
+import com.example.cookup.auth.AuthViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
-    private lateinit var viewModel: LoginViewModel
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-
-        val emailInputLayout = view.findViewById<TextInputLayout>(R.id.emailInput)
-        val passwordInputLayout = view.findViewById<TextInputLayout>(R.id.passwordInput)
-        val loginButton = view.findViewById<Button>(R.id.btnLogin)
-
-        val emailField = emailInputLayout.editText
-        val passwordField = passwordInputLayout.editText
-
-        emailField?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.onEmailChanged(s.toString())
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
-        passwordField?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.onPasswordChanged(s.toString())
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        val emailField = view.findViewById<TextInputLayout>(R.id.emailInput).editText
+        val passwordField = view.findViewById<TextInputLayout>(R.id.passwordInput).editText
+        val loginButton = view.findViewById<View>(R.id.btnLogin)
+        val signUpText = view.findViewById<View>(R.id.tvSignUp)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val loginCard = view.findViewById<View>(R.id.loginCard)
 
         loginButton.setOnClickListener {
-            viewModel.login()
+            val email = emailField?.text.toString().trim()
+            val password = passwordField?.text.toString().trim()
+            authViewModel.login(email, password)
         }
 
-        viewModel.loginStatus.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
-                val sharedPref = requireActivity().getSharedPreferences("CookUpPrefs", Context.MODE_PRIVATE)
-                with(sharedPref.edit()) {
-                    putBoolean("isLoggedIn", true)
-                    apply()
-                }
+        signUpText.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
+        }
 
+        authViewModel.loginStatus.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 startActivity(intent)
                 requireActivity().finish()
-            } else {
-                Toast.makeText(requireContext(), "שם משתמש או סיסמה אינם נכונים", Toast.LENGTH_SHORT).show()
             }
         }
 
+        authViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        view.findViewById<TextView>(R.id.tvSignUp).setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
+        authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                loginCard.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
+            } else {
+                loginCard.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
+            }
         }
     }
 }
-

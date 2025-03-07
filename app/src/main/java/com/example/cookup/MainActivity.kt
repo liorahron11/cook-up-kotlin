@@ -2,13 +2,17 @@ package com.example.cookup
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.cookup.auth.AuthViewModel
 import com.example.cookup.ui.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,5 +37,14 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
+
+        authViewModel.loginStatus.observe(this) { isLoggedIn ->
+            if (!isLoggedIn) {
+                // User logged out, redirect to LoginActivity
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 }
