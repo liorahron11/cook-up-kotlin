@@ -1,26 +1,22 @@
 package com.example.cookup.ui.profile
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.cookup.R
 import com.example.cookup.auth.AuthViewModel
-import com.example.cookup.services.FirestoreService
 import com.example.cookup.ui.login.LoginActivity
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private val authViewModel: AuthViewModel by viewModels()
-    private val firestoreService = FirestoreService()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
