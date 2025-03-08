@@ -3,6 +3,7 @@ package com.example.cookup.ui.signup
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,34 +26,45 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
 
     private val authViewModel: AuthViewModel by viewModels()
     private var selectedImageUri: Uri? = null
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            val data: Intent? = result.data
+            selectedImageUri = data?.data
+            view?.findViewById<ImageView>(R.id.profileImageView)?.setImageURI(selectedImageUri)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val emailInputLayout = view.findViewById<TextInputLayout>(R.id.emailInput)
+        val usernameInputLayout = view.findViewById<TextInputLayout>(R.id.usernameInput)
         val passwordInputLayout = view.findViewById<TextInputLayout>(R.id.passwordInput)
         val confirmPasswordInputLayout = view.findViewById<TextInputLayout>(R.id.confirmPasswordInput)
         val signupButton = view.findViewById<Button>(R.id.btnSignup)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val signupCard = view.findViewById<View>(R.id.signupCard)
-        val profileImageView = view.findViewById<ImageView>(R.id.profileImageView)
         val pickImageButton = view.findViewById<Button>(R.id.btnPickImage)
 
         val emailField = emailInputLayout.editText
+        val usernameField = usernameInputLayout.editText
         val passwordField = passwordInputLayout.editText
         val confirmPasswordField = confirmPasswordInputLayout.editText
 
         pickImageButton.setOnClickListener {
-            pickImage()
+            openGallery()
         }
 
         signupButton.setOnClickListener {
             val email = emailField?.text.toString().trim()
+            val username = usernameField?.text.toString().trim()
             val password = passwordField?.text.toString().trim()
             val confirmPassword = confirmPasswordField?.text.toString().trim()
 
             if (confirmPassword == password) {
-                authViewModel.signup(email, password, selectedImageUri)
+                authViewModel.signup(email, username, password, selectedImageUri)
             } else {
                 authViewModel.setAuthErrorMessage("סיסמה ואישור סיסמה אינם תואמים")
             }
@@ -89,18 +102,10 @@ class SignupFragment : Fragment(R.layout.fragment_signup) {
         }
     }
 
-    private fun pickImage() {
+    private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, 1001)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1001 && resultCode == AppCompatActivity.RESULT_OK) {
-            selectedImageUri = data?.data
-            view?.findViewById<ImageView>(R.id.profileImageView)?.setImageURI(selectedImageUri)
-        }
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+        imagePickerLauncher.launch(intent)
     }
 }
 

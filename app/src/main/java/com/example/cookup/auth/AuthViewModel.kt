@@ -55,8 +55,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun signup(email: String, password: String, profileImageUri: Uri?) {
-        if (email.isNotEmpty() && password.isNotEmpty()) {
+    fun signup(email: String, username: String, password: String, profileImageUri: Uri?) {
+        if (email.isNotEmpty() && password.isNotEmpty() && username.isNotEmpty()) {
             _isLoading.value = true
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -65,30 +65,29 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         profileImageUri?.let { uri ->
                             firestoreService.uploadProfileImage(uri,
                                 onSuccess = { imageUrl ->
-                                    saveUserProfile(user?.email ?: "", imageUrl)
+                                    saveUserProfile(user?.email ?: "", username, imageUrl)
                                 },
                                 onFailure = { error ->
                                     _isLoading.value = false
                                     _errorMessage.value = error
                                 }
                             )
-                        } ?: saveUserProfile(user?.email ?: "", null)
-//                        saveLoginState(true)
-//                        _signupStatus.value = true
+                        } ?: saveUserProfile(user?.email ?: "", username, null)
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
                     }
-                    _isLoading.value = false
                 }
         } else {
             _errorMessage.value = "נדרש למלא את כל השדות"
         }
     }
 
-    private fun saveUserProfile(email: String, profileImageUrl: String?) {
-        firestoreService.saveUserProfile(email, profileImageUrl,
+    private fun saveUserProfile(email: String, username: String, profileImageUrl: String?) {
+        firestoreService.saveUserProfile(email, username, profileImageUrl,
             onSuccess = {
                 _isLoading.value = false
+                _signupStatus.value = true
+                saveLoginState(true)
                 _signupStatus.value = true
             },
             onFailure = { error ->

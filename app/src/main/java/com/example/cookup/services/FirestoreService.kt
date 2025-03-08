@@ -13,22 +13,23 @@ class FirestoreService {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun uploadProfileImage(imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (String) -> Unit) {
-        val userId = auth.currentUser?.uid ?: return
-        val storageRef = storage.reference.child("profile_images/$userId.jpg")
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/$userId.jpg")
 
         storageRef.putFile(imageUri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onSuccess(uri.toString())
+                    onSuccess(uri.toString()) // Correctly returns image URL
                 }
             }
             .addOnFailureListener { e ->
-                onFailure(e.message ?: "שגיאה בהעלאת תמונה")
+                onFailure(e.message ?: "שגיאה בהעלאת התמונה")
             }
     }
 
     fun saveUserProfile(
         email: String,
+        username: String,
         profileImageUrl: String?,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
@@ -37,6 +38,7 @@ class FirestoreService {
         val userMap = hashMapOf(
             "uid" to userId,
             "email" to email,
+            "username" to username,
             "profileImageUrl" to profileImageUrl
         )
 
