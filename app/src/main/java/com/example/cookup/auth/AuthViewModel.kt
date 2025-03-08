@@ -2,15 +2,19 @@ package com.example.cookup.auth
 
 import android.app.Application
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.cookup.services.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestoreService = FirestoreService()
     private val sharedPref = application.getSharedPreferences("CookUpPrefs", Context.MODE_PRIVATE)
 
     private val _loginStatus = MutableLiveData<Boolean>()
@@ -24,6 +28,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _profileImageUrl = MutableLiveData<String?>()
+    val profileImageUrl: LiveData<String?> = _profileImageUrl
 
     init {
         val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
@@ -48,14 +55,26 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun signup(email: String, password: String) {
+    fun signup(email: String, password: String, profileImageUri: Uri?) {
         if (email.isNotEmpty() && password.isNotEmpty()) {
             _isLoading.value = true
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        saveLoginState(true)
-                        _signupStatus.value = true
+                        val user = task.result?.user
+                        profileImageUri?.let { uri ->
+                            firestoreService.uploadProfileImage(uri,
+                                onSuccess = { imageUrl ->
+                                    saveUserProfile(user?.email ?: "", imageUrl)
+                                },
+                                onFailure = { error ->
+                                    _isLoading.value = false
+                                    _errorMessage.value = error
+                                }
+                            )
+                        } ?: saveUserProfile(user?.email ?: "", null)
+//                        saveLoginState(true)
+//                        _signupStatus.value = true
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
                     }
@@ -64,6 +83,19 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             _errorMessage.value = "נדרש למלא את כל השדות"
         }
+    }
+
+    private fun saveUserProfile(email: String, profileImageUrl: String?) {
+        firestoreService.saveUserProfile(email, profileImageUrl,
+            onSuccess = {
+                _isLoading.value = false
+                _signupStatus.value = true
+            },
+            onFailure = { error ->
+                _isLoading.value = false
+                _errorMessage.value = error
+            }
+        )
     }
 
     fun logout() {

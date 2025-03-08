@@ -42,7 +42,26 @@
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profile_image_placeholder"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"/>
+
+        <Button
+            android:id="@+id/btnPickImage"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/CustomButtonTextAppearance"
+            android:text="בחר תמונה"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"/>
+
+
+            <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/emailInput"
