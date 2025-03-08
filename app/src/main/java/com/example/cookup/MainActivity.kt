@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         // Check if the user is logged in
         val sharedPref = getSharedPreferences("CookUpPrefs", MODE_PRIVATE)
-        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        val loggedEmail = sharedPref.getString("email", "").toString()
 
-        if (!isLoggedIn) {
+        if (loggedEmail.isEmpty()) {
             // Redirect to LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.cookup.models.User
 import com.example.cookup.services.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -32,9 +33,24 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _profileImageUrl = MutableLiveData<String?>()
     val profileImageUrl: LiveData<String?> = _profileImageUrl
 
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
+
     init {
-        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
-        _loginStatus.value = isLoggedIn
+        checkIfUserIsLoggedIn()
+    }
+
+    private fun checkIfUserIsLoggedIn() {
+        val uid = sharedPref.getString("uid", "").toString()
+        val email = sharedPref.getString("email", "").toString()
+        val username = sharedPref.getString("username", "").toString()
+        val profileImageUrl = sharedPref.getString("profileImageUrl", "").toString()
+
+        if (uid.isNotEmpty()) {
+            _user.value = User(uid, email, username, profileImageUrl)
+        }
+
+        _loginStatus.value = _user.value != null
     }
 
     fun login(email: String, password: String) {
@@ -44,8 +60,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 .addOnCompleteListener { task ->
                     _isLoading.value = false  // Hide loading spinner
                     if (task.isSuccessful) {
-                        saveLoginState(true)
-                        _loginStatus.value = true
+                        firestoreService.getUserProfile(
+                            onSuccess = { document ->
+                                saveUserLocally(document.getString("uid").toString(),
+                                    document.getString("email").toString(),
+                                    document.getString("username").toString(),
+                                    document.getString("profileImageUrl").toString())
+                                _loginStatus.value = true
+                            },
+                            onFailure = { error ->
+                                _errorMessage.value = error.toString()
+                            }
+                        )
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
                     }
@@ -65,14 +91,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         profileImageUri?.let { uri ->
                             firestoreService.uploadProfileImage(uri,
                                 onSuccess = { imageUrl ->
-                                    saveUserProfile(user?.email ?: "", username, imageUrl)
+                                    saveUserProfile(user?.uid ?: "", user?.email ?: "", username, imageUrl)
                                 },
                                 onFailure = { error ->
                                     _isLoading.value = false
                                     _errorMessage.value = error
                                 }
                             )
-                        } ?: saveUserProfile(user?.email ?: "", username, null)
+                        } ?: saveUserProfile(user?.uid ?: "",user?.email ?: "", username, null)
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
                     }
@@ -82,13 +108,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun saveUserProfile(email: String, username: String, profileImageUrl: String?) {
+    private fun saveUserProfile(uid: String, email: String, username: String, profileImageUrl: String?) {
         firestoreService.saveUserProfile(email, username, profileImageUrl,
             onSuccess = {
                 _isLoading.value = false
                 _signupStatus.value = true
-                saveLoginState(true)
-                _signupStatus.value = true
+                saveUserLocally(uid, email, username, profileImageUrl)
             },
             onFailure = { error ->
                 _isLoading.value = false
@@ -99,15 +124,33 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() {
         auth.signOut()
-        saveLoginState(false)
+        clearUserLocally()
+        _user.value = null
         _loginStatus.value = false
     }
 
-    private fun saveLoginState(isLoggedIn: Boolean) {
+    private fun saveUserLocally(uid: String, email: String, username: String, profileImageUrl: String?) {
         with(sharedPref.edit()) {
-            putBoolean("isLoggedIn", isLoggedIn)
+            putString("uid", uid)
+            putString("email", email)
+            putString("username", username)
+            putString("profileImageUrl", profileImageUrl)
             apply()
         }
+
+        _user.value = User(uid, email, username, profileImageUrl)
+    }
+
+    private fun clearUserLocally() {
+        with(sharedPref.edit()) {
+            remove("uid")
+            remove("email")
+            remove("username")
+            remove("profileImageUrl")
+            apply()
+        }
+
+        _user.value = null
     }
 
     fun setAuthErrorMessage(message: String) {

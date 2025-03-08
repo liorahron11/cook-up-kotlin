@@ -9,7 +9,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 class FirestoreService {
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun uploadProfileImage(imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (String) -> Unit) {
