@@ -10,7 +10,6 @@ import com.example.cookup.models.User
 import com.example.cookup.services.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -35,6 +34,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
+
+    private val _updateStatus = MutableLiveData<Boolean>()
+    val updateStatus: LiveData<Boolean> = _updateStatus
 
     init {
         checkIfUserIsLoggedIn()
@@ -169,5 +171,29 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             "ERROR_INVALID_CREDENTIAL" -> "אימייל או סיסמה אינם נכונים"
             else -> "אירעה שגיאה, נסה שוב"
         }
+    }
+
+    fun updateUserField(field: String, newValue: String) {
+        _isLoading.value = true
+
+        firestoreService.updateUserField(
+            field, newValue,
+            onSuccess = {
+                firestoreService.getUserProfile(
+                    onSuccess = { document ->
+                        saveUserLocally(document.getString("uid").toString(),
+                            document.getString("email").toString(),
+                            document.getString("username").toString(),
+                            document.getString("profileImageUrl").toString())
+                        _updateStatus.postValue(true)
+                        _isLoading.value = false
+                    },
+                    onFailure = { error ->
+                        _errorMessage.value = error.toString()
+                    }
+                )
+            },
+            onFailure = { error -> _errorMessage.postValue(error) }
+        )
     }
 }

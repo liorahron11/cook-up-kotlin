@@ -30,7 +30,21 @@
         android:id="@+id/profileSettingsFragment"
         android:name="com.example.cookup.ui.profile_settings.ProfileSettingsFragment"
         android:label="profileSettings">
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_editFragment"
+            app:destination="@id/editFragment">
+            <argument
+                android:name="field"
+                app:argType="string"/>
+            <argument
+                android:name="fieldHebrewName"
+                app:argType="string"/>
+        </action>
     </fragment>
 
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.cookup.ui.profile_settings.EditFragment"
+        android:label="Edit Field"/>
 
 </navigation>

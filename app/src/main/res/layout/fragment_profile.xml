@@ -43,5 +43,12 @@
         android:textSize="26sp"
         android:textColor="@color/black"
         android:layout_gravity="center"
+        android:layout_marginBottom="16sp"
         android:textStyle="bold"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"/>
 </LinearLayout>

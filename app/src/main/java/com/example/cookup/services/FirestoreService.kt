@@ -59,4 +59,36 @@ class FirestoreService {
                 onFailure(e.message ?: "שגיאה בשליפת נתוני המשתמש")
             }
     }
+
+    fun updateUserField(field: String, newValue: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        val userId = auth.currentUser?.uid ?: return
+
+        val userRef = firestore.collection("users").document(userId)
+
+        when (field.lowercase()) {
+            "username" -> {
+                userRef.update("username", newValue)
+                    .addOnSuccessListener { onSuccess() }
+                    .addOnFailureListener { e -> onFailure(e.message ?: "Error updating username") }
+            }
+            "email" -> {
+                auth.currentUser?.updateEmail(newValue)
+                    ?.addOnSuccessListener {
+                        userRef.update("email", newValue)
+                            .addOnSuccessListener { onSuccess() }
+                            .addOnFailureListener { e -> onFailure(e.message ?: "Error updating email") }
+                    }
+                    ?.addOnFailureListener { e -> onFailure(e.message ?: "Error updating email") }
+
+            }
+            "password" -> {
+                auth.currentUser?.updatePassword(newValue)
+                    ?.addOnSuccessListener { onSuccess() }
+                    ?.addOnFailureListener { e -> onFailure(e.message ?: "Error updating password") }
+            }
+            else -> {
+                onFailure("Invalid field")
+            }
+        }
+    }
 }
