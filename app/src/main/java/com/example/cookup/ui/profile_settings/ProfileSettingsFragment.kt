@@ -55,7 +55,7 @@ class ProfileSettingsFragment : Fragment(R.layout.fragment_profile_settings) {
         }
 
         view.findViewById<Button>(R.id.profilePictureBtn).setOnClickListener {
-//            navController.navigate(R.id.action_profileSettingsFragment_to_editProfilePictureFragment)
+            navController.navigate(R.id.action_profileSettingsFragment_to_updateProfileImageFragment)
         }
 
         logoutButton.setOnClickListener {

@@ -20,6 +20,9 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
 
     private lateinit var navController: NavController
     private lateinit var authViewModel: AuthViewModel
+    private lateinit var progressBar: ProgressBar
+    private lateinit var editLayout: LinearLayout
+    private lateinit var buttonsLayout: LinearLayout
     private var field: String? = null
     private var fieldHebrewName: String? = null
 
@@ -67,8 +70,8 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
 
         authViewModel.updateStatus.observe(viewLifecycleOwner) { success ->
             if (success) {
-                Toast.makeText(requireContext(), "$fieldHebrewName עודכן ", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
+                Toast.makeText(requireContext(), "$fieldHebrewName עודכן ", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -78,20 +81,12 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
             }
         }
 
-        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        val editLayout = view.findViewById<LinearLayout>(R.id.editLayout)
-        val buttonsLayout = view.findViewById<LinearLayout>(R.id.buttonsLayout)
+        progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        editLayout = view.findViewById<LinearLayout>(R.id.editLayout)
+        buttonsLayout = view.findViewById<LinearLayout>(R.id.buttonsLayout)
 
         authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                editLayout.visibility = View.GONE
-                buttonsLayout.visibility = View.GONE
-                progressBar.visibility = View.VISIBLE
-            } else {
-                editLayout.visibility = View.VISIBLE
-                buttonsLayout.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
-            }
+            setLoadind(isLoading)
         }
     }
 
@@ -101,5 +96,17 @@ class EditFragment : Fragment(R.layout.fragment_edit) {
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun setLoadind(value: Boolean) {
+        if (value) {
+            editLayout.visibility = View.GONE
+            buttonsLayout.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        } else {
+            editLayout.visibility = View.VISIBLE
+            buttonsLayout.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+        }
     }
 }

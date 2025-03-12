@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-<com.google.android.material.progressindicator.CircularProgressIndicator
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,20 +35,25 @@
             android:layout_marginBottom="16sp"
             android:textColor="@color/black"
             android:textSize="30sp"
+            android:text="עדכון תמונת פרופיל"
             android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputOutlinedStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <ImageView
+        android:id="@+id/profileImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/profile_image_placeholder"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="בחר תמונה"
+        android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 
@@ -60,14 +65,15 @@
         android:orientation="vertical"
         android:gravity="bottom"
         android:padding="16dp">
+
     <Button
         android:id="@+id/btnSave"
+        style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="@style/CustomButtonTextAppearance"
         android:text="שמור"
-        android:backgroundTint="@color/dark_green"
-        android:textColor="@color/white"/>
-
+        android:layout_marginTop="24dp" />
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
@@ -76,4 +82,5 @@
         android:backgroundTint="@color/gray"
         android:textColor="@color/white"/>
     </LinearLayout>
+
 </LinearLayout>

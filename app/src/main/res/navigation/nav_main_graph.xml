@@ -40,11 +40,20 @@
                 android:name="fieldHebrewName"
                 app:argType="string"/>
         </action>
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_updateProfileImageFragment"
+            app:destination="@id/updateProfileImageFragment">
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/editFragment"
         android:name="com.example.cookup.ui.profile_settings.EditFragment"
         android:label="Edit Field"/>
+
+    <fragment
+        android:id="@+id/updateProfileImageFragment"
+        android:name="com.example.cookup.ui.profile_settings.UpdateProfileImageFragment"
+        android:label="Update Profile Image"/>
 
 </navigation>

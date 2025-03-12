@@ -10,11 +10,36 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.Target
 import com.example.cookup.R
 import com.example.cookup.auth.AuthViewModel
+import java.util.concurrent.Executors
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var authViewModel: AuthViewModel
+    private var cachedImagePath: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val sharedPref = requireContext().getSharedPreferences("CookUpPrefs", Context.MODE_PRIVATE)
+        val profileImageUrl = sharedPref.getString("profileImageUrl", "").toString()
+
+        Executors.newSingleThreadExecutor().execute {
+            val future = Glide.with(requireContext())
+                .downloadOnly()
+                .load(profileImageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+
+            try {
+                val file = future.get()
+                cachedImagePath = file.absolutePath
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,12 +67,16 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val profileImageUrl = sharedPref.getString("profileImageUrl", "").toString()
 
         usernameTextView?.text = loggedUsername
-        val imageUrl = profileImageUrl
-        if (imageUrl.isNotEmpty()) {
-            Glide.with(this)
-                .load(imageUrl)
-                .placeholder(R.drawable.profile_image_placeholder)
-                .into(profileImageView!!)
+        if (profileImageUrl.isNotEmpty()) {
+            cachedImagePath?.let {
+                Glide.with(this)
+                    .load(it)
+                    .into(profileImageView!!)
+            } ?: run {
+                Glide.with(this)
+                    .load(profileImageUrl)
+                    .into(profileImageView!!)
+            }
         }
     }
 }
