@@ -20,6 +20,40 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.cookup.ui.profile.ProfileFragment"
-        android:label="Profile"/>
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_ProfileSettingsFragment"
+            app:destination="@id/profileSettingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileSettingsFragment"
+        android:name="com.example.cookup.ui.profile_settings.ProfileSettingsFragment"
+        android:label="profileSettings">
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_editFragment"
+            app:destination="@id/editFragment">
+            <argument
+                android:name="field"
+                app:argType="string"/>
+            <argument
+                android:name="fieldHebrewName"
+                app:argType="string"/>
+        </action>
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_updateProfileImageFragment"
+            app:destination="@id/updateProfileImageFragment">
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.cookup.ui.profile_settings.EditFragment"
+        android:label="Edit Field"/>
+
+    <fragment
+        android:id="@+id/updateProfileImageFragment"
+        android:name="com.example.cookup.ui.profile_settings.UpdateProfileImageFragment"
+        android:label="Update Profile Image"/>
 
 </navigation>

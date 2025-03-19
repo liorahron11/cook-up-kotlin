@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         // Check if the user is logged in
         val sharedPref = getSharedPreferences("CookUpPrefs", MODE_PRIVATE)
-        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        val loggedEmail = sharedPref.getString("email", "").toString()
 
-        if (!isLoggedIn) {
+        if (loggedEmail.isEmpty()) {
             // Redirect to LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -37,6 +37,36 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.homeFragment -> {
+                    if (navController.currentDestination?.id != R.id.homeFragment) {
+                        navController.navigate(R.id.homeFragment)
+                    }
+                    true
+                }
+                R.id.searchFragment -> {
+                    if (navController.currentDestination?.id != R.id.searchFragment) {
+                        navController.navigate(R.id.searchFragment)
+                    }
+                    true
+                }
+                R.id.createRecipeFragment -> {
+                    if (navController.currentDestination?.id != R.id.createRecipeFragment) {
+                        navController.navigate(R.id.createRecipeFragment)
+                    }
+                    true
+                }
+                R.id.profileFragment -> {
+                    if (navController.currentDestination?.id != R.id.profileFragment) {
+                        navController.navigate(R.id.profileFragment)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
 
         authViewModel.loginStatus.observe(this) { isLoggedIn ->
             if (!isLoggedIn) {

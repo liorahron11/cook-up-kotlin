@@ -4,25 +4,25 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
-        android:title="Home"
+        android:title="פיד"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/searchFragment"
         android:icon="@drawable/ic_search"
-        android:title="Search"
+        android:title="חיפוש"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/createRecipeFragment"
         android:icon="@drawable/ic_add"
-        android:title="Create"
+        android:title="יצירה"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_profile"
-        android:title="Profile"
+        android:title="פרופיל"
         app:showAsAction="ifRoom"/>
 
 </menu>
