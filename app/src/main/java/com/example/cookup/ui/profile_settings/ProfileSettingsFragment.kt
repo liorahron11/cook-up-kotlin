@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.cookup.R
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import com.example.cookup.ui.login.LoginActivity
 
 class ProfileSettingsFragment : Fragment(R.layout.fragment_profile_settings) {

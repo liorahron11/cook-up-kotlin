@@ -1,4 +1,4 @@
-package com.example.cookup.auth
+package com.example.cookup.view_models
 
 import android.app.Application
 import android.content.Context

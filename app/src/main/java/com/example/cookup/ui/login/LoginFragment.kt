@@ -1,6 +1,5 @@
 package com.example.cookup.ui.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cookup.MainActivity
 import com.example.cookup.R
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
