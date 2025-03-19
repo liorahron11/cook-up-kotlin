@@ -103,6 +103,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         } ?: saveUserProfile(user?.uid ?: "",user?.email ?: "", username, null)
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
+                        _isLoading.value = false
                     }
                 }
         } else {

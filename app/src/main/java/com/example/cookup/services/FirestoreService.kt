@@ -1,6 +1,7 @@
 package com.example.cookup.services
 
 import android.net.Uri
+import com.example.cookup.models.Recipe
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -90,5 +91,12 @@ class FirestoreService {
                 onFailure("Invalid field")
             }
         }
+    }
+
+
+    fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("recipes").add(recipe)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
     }
 }
