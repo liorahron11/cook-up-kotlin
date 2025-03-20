@@ -57,6 +57,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 setUserDetails()
             }
         }
+
+        childFragmentManager.beginTransaction()
+            .replace(R.id.gridFragmentContainer, RecipeGridFragment())
+            .commit()
+
     }
 
     private fun setUserDetails() {

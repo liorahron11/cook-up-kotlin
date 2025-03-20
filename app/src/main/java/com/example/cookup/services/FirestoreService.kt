@@ -1,7 +1,9 @@
 package com.example.cookup.services
 
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import com.example.cookup.models.Recipe
+import com.example.cookup.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -98,5 +100,18 @@ class FirestoreService {
         firestore.collection("recipes").add(recipe)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onFailure(e) }
+    }
+
+    fun getUserRecipe(userId: String, onSuccess: (List<Recipe>) -> Unit, onFailure: (String) -> Unit) {
+        firestore.collection("recipes")
+            .whereEqualTo("senderId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+                val recipes = result.documents.mapNotNull { it.toObject(Recipe::class.java) }
+                onSuccess(recipes)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception.message ?: "שגיאה בשליפת מתכוני המשתמש")
+            }
     }
 }
