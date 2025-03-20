@@ -1,5 +1,7 @@
 package com.example.cookup.ui.create_recipe
 
+import android.R.attr.height
+import android.R.attr.width
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -11,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.cookup.R
 import com.example.cookup.databinding.FragmentCreateRecipeBinding
 import com.example.cookup.models.Recipe
+import com.example.cookup.ui.shared.IngredientInputFragment
 import com.example.cookup.view_models.RecipeViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -34,8 +38,13 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        childFragmentManager.beginTransaction()
+            .replace(R.id.ingredientUnitFragmentContainer, IngredientInputFragment())
+            .commit()
+
         binding.btnUploadImage.setOnClickListener { selectImage() }
         binding.btnSaveRecipe.setOnClickListener { saveRecipe() }
+        Glide.with(binding.imageViewRecipe)
     }
 
     private fun selectImage() {
@@ -62,7 +71,7 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
             return
         }
 
-        binding.progressBar.visibility = View.VISIBLE
+        setLoading(true)
         viewModel.uploadImage(imageUri!!, recipeId) { imageUrl ->
             if (imageUrl != null) {
                 val recipe = Recipe(
@@ -78,7 +87,7 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
                 )
 
                 viewModel.addRecipe(recipe) { success ->
-                    binding.progressBar.visibility = View.GONE
+                    setLoading(false)
                     if (success) {
                         Toast.makeText(context, "המתכון נוצר בהצלחה", Toast.LENGTH_SHORT).show()
                     } else {
@@ -86,14 +95,27 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
                     }
                 }
             } else {
-                binding.progressBar.visibility = View.GONE
+                setLoading(false)
                 Toast.makeText(context, "שגיאה בהעלאת תמונה", Toast.LENGTH_SHORT).show()
             }
         }
 
     }
 
+    private fun setLoading(value: Boolean) {
+        if (value) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.formLayout.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.formLayout.visibility = View.VISIBLE
+        }
+    }
+
     companion object {
         private const val REQUEST_IMAGE_PICK = 100
     }
 }
+
+
+//TODO: ADD INGREDIENTS, DESIGN BETTER
