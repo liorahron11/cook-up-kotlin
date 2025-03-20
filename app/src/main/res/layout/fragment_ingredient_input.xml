@@ -1,0 +1,71 @@
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="horizontal"
+        android:layoutDirection="rtl"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:weightSum="1"
+        android:background="@color/white">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:hint="כמות"
+            android:layout_marginEnd="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/quantityInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:layout_width="100dp"
+            android:layout_height="62dp"
+            android:layout_marginEnd="10dp"
+            android:hint="יחידות מידה">
+
+            <AutoCompleteTextView
+                android:id="@+id/ingredientMenu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="false"
+                android:inputType="none"
+                android:textSize="16dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:layout_width="90dp"
+            android:layout_height="match_parent"
+            android:hint="שם">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRemoveIngredient"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            app:strokeWidth="0dp"
+            android:contentDescription="הסר"
+            app:icon="@drawable/ic_cancel"
+            android:textColor="@color/dark_green"
+            app:iconTint="@color/red"
+            android:backgroundTint="@color/white"
+            app:cornerRadius="20dp" />
+
+    </LinearLayout>

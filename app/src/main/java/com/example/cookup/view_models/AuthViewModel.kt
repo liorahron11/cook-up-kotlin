@@ -1,4 +1,4 @@
-package com.example.cookup.auth
+package com.example.cookup.view_models
 
 import android.app.Application
 import android.content.Context
@@ -103,6 +103,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         } ?: saveUserProfile(user?.uid ?: "",user?.email ?: "", username, null)
                     } else {
                         _errorMessage.value = getHebrewErrorMessage(task.exception)
+                        _isLoading.value = false
                     }
                 }
         } else {

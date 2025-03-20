@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import com.example.cookup.ui.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.getValue

@@ -17,7 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cookup.MainActivity
 import com.example.cookup.R
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class SignupFragment : Fragment(R.layout.fragment_signup) {

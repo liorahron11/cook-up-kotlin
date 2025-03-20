@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target
 import com.example.cookup.R
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import java.util.concurrent.Executors
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {

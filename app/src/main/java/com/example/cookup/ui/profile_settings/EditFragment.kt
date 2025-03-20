@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.cookup.auth.AuthViewModel
+import com.example.cookup.view_models.AuthViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.example.cookup.R
 
