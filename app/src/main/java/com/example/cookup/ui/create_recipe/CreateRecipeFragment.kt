@@ -13,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.cookup.R
 import com.example.cookup.databinding.FragmentCreateRecipeBinding
+import com.example.cookup.models.Ingredient
 import com.example.cookup.models.Recipe
 import com.example.cookup.ui.shared.IngredientInputFragment
 import com.example.cookup.view_models.RecipeViewModel
@@ -71,41 +73,51 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
         val description = binding.recipeDescription.text.toString().trim()
         val instructions = binding.recipeInstructions.text.toString().trim()
         val recipeId = UUID.randomUUID().toString()
-
-        if (title.isEmpty() || description.isEmpty() || instructions.isEmpty() || imageUri == null) {
-            Toast.makeText(context, "יש למלא את כל השדות ולבחור תמונה", Toast.LENGTH_SHORT).show()
+        val ingredients = collectIngredientsData()
+        if (title.isEmpty() || description.isEmpty() || instructions.isEmpty() || ingredients.isEmpty()) {
+            Toast.makeText(context, "יש למלא את כל השדות", Toast.LENGTH_SHORT).show()
             return
         }
 
         setLoading(true)
-        viewModel.uploadImage(imageUri!!, recipeId) { imageUrl ->
-            if (imageUrl != null) {
-                val recipe = Recipe(
-                    id = recipeId,
-                    timestamp = Timestamp.now(),
-                    senderId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
-                    title = title,
-                    description = description,
-                    instructions = instructions,
-                    comments = emptyList(),
-                    likes = emptyList(),
-                    image = imageUrl
-                )
+        if (imageUri != null) {
+            viewModel.uploadImage(imageUri!!, recipeId) { imageUrl ->
+                if (imageUrl != null) {
+                    val recipe = Recipe(
+                        id = recipeId,
+                        timestamp = Timestamp.now(),
+                        senderId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                        title = title,
+                        description = description,
+                        instructions = instructions,
+                        ingredients = ingredients,
+                        comments = emptyList(),
+                        likes = emptyList(),
+                        image = imageUrl
+                    )
 
-                viewModel.addRecipe(recipe) { success ->
+                    uploadRecipe(recipe)
+                } else {
                     setLoading(false)
-                    if (success) {
-                        Toast.makeText(context, "המתכון נוצר בהצלחה", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "שגיאה ביצירת מתכון", Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(context, "שגיאה בהעלאת התמונה", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                setLoading(false)
-                Toast.makeText(context, "שגיאה בהעלאת תמונה", Toast.LENGTH_SHORT).show()
             }
-        }
+        } else {
+            val recipe = Recipe(
+                id = recipeId,
+                timestamp = Timestamp.now(),
+                senderId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+                title = title,
+                description = description,
+                instructions = instructions,
+                ingredients = ingredients,
+                comments = emptyList(),
+                likes = emptyList(),
+                image = ""
+            )
 
+            uploadRecipe(recipe)
+        }
     }
 
     private fun addIngredientFragment() {
@@ -129,7 +141,35 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
     companion object {
         private const val REQUEST_IMAGE_PICK = 100
     }
+
+    private fun collectIngredientsData(): List<Ingredient> {
+        val ingredientList = mutableListOf<Ingredient>()
+
+        for (fragment in childFragmentManager.fragments) {
+            if (fragment is IngredientInputFragment) {
+                val ingredient = fragment.getIngredientData()
+                if (ingredient != null) {
+                    ingredientList.add(ingredient)
+                }
+            }
+        }
+
+        return ingredientList
+    }
+
+    private fun uploadRecipe(recipe: Recipe) {
+        viewModel.addRecipe(recipe) { success ->
+            setLoading(false)
+            if (success) {
+                Toast.makeText(context, "המתכון נוצר בהצלחה", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_createRecipeFragment_to_profileFragment)
+            } else {
+                Toast.makeText(context, "שגיאה ביצירת מתכון", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
+
 
 
 //TODO: ADD INGREDIENTS, DESIGN BETTER

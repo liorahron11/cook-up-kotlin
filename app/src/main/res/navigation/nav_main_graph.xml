@@ -15,7 +15,12 @@
     <fragment
         android:id="@+id/createRecipeFragment"
         android:name="com.example.cookup.ui.create_recipe.CreateRecipeFragment"
-        android:label="Create"/>
+        android:label="Create">
+    <action
+        android:id="@+id/action_createRecipeFragment_to_profileFragment"
+        app:destination="@id/profileFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/profileFragment"

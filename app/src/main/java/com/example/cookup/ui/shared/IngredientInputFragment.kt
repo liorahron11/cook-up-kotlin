@@ -9,10 +9,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cookup.R
 import com.example.cookup.enums.EIngredientUnit
+import com.example.cookup.models.Ingredient
+import com.google.android.material.textfield.TextInputEditText
 
 class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
 
     private var index: Int = 0
+    private lateinit var quantity: TextInputEditText
+    private lateinit var ingredientUnit: EIngredientUnit
+    private lateinit var name: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +39,12 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
         }
         // Handle selection
         dropdown.setOnItemClickListener { _, _, position, _ ->
-            val selectedUnit = EIngredientUnit.entries[position]
-            Toast.makeText(context, "Selected: ${selectedUnit.hebrew}", Toast.LENGTH_SHORT).show()
+            ingredientUnit = EIngredientUnit.entries[position]
         }
+
+        quantity = view.findViewById(R.id.quantityInput)
+        name = view.findViewById(R.id.nameInput)
+
 
         view.findViewById<Button>(R.id.btnRemoveIngredient).setOnClickListener {
             removeFragment()
@@ -56,4 +64,13 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
     private fun removeFragment() {
         parentFragmentManager.beginTransaction().remove(this).commit()
     }
+
+    fun getIngredientData(): Ingredient? {
+        if (quantity.text.toString().isNotEmpty() && ingredientUnit.toString().isNotEmpty() && name.text?.isNotEmpty() == true) {
+            return Ingredient(quantity.text.toString().toInt(), ingredientUnit, name.text.toString())
+        }
+
+        return null
+    }
+
 }

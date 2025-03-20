@@ -13,7 +13,7 @@
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputOutlinedStyle"
             android:layout_width="50dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:hint="כמות"
             android:layout_marginEnd="10dp">
 
@@ -27,7 +27,7 @@
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputOutlinedStyle"
             android:layout_width="100dp"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:layout_marginEnd="10dp"
             android:hint="יחידות מידה">
 
@@ -50,7 +50,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nameInput"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
