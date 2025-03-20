@@ -27,6 +27,8 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
     private lateinit var binding: FragmentCreateRecipeBinding
     private val viewModel: RecipeViewModel by viewModels()
     private var imageUri: Uri? = null
+    private var ingredientCount = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,6 +43,10 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
         childFragmentManager.beginTransaction()
             .replace(R.id.ingredientUnitFragmentContainer, IngredientInputFragment())
             .commit()
+
+        binding.btnAddIngredient.setOnClickListener {
+            addIngredientFragment()
+        }
 
         binding.btnUploadImage.setOnClickListener { selectImage() }
         binding.btnSaveRecipe.setOnClickListener { saveRecipe() }
@@ -100,6 +106,14 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
             }
         }
 
+    }
+
+    private fun addIngredientFragment() {
+        val newFragment = IngredientInputFragment.newInstance(ingredientCount++)
+
+        childFragmentManager.beginTransaction()
+            .add(R.id.ingredientUnitFragmentContainer, newFragment, "ingredient_$ingredientCount")
+            .commit()
     }
 
     private fun setLoading(value: Boolean) {
