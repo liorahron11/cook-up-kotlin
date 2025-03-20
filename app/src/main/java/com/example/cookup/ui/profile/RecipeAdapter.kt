@@ -17,10 +17,8 @@ class RecipeAdapter(
 
     class RecipeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val imageView: ImageView = view.findViewById(R.id.recipeImage)
-//        private val titleView: TextView = view.findViewById(R.id.recipeTitle)
 
         fun bind(recipe: Recipe, onClick: (Recipe) -> Unit) {
-//            titleView.text = recipe.title
             Glide.with(imageView.context)
                 .load(recipe.image)
                 .centerCrop()

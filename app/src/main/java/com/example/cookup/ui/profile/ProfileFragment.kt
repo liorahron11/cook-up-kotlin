@@ -13,15 +13,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target
 import com.example.cookup.R
 import com.example.cookup.models.User
+import com.example.cookup.room.entities.Profile
 import com.example.cookup.view_models.AuthViewModel
+import com.example.cookup.room.view_models.ProfileViewModel
+import com.example.cookup.room.view_models.RecipeViewModel
 import java.util.concurrent.Executors
 import kotlin.getValue
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val authViewModel: AuthViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private var cachedImagePath: String? = null
     private val args: ProfileFragmentArgs by navArgs()
     private lateinit var user: User
+    private var cachedProfile: Profile? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,19 +36,28 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             user = authViewModel.user.value!!
         }
 
+        profileViewModel.getProfile { profile ->
+            if (profile != null) {
+                cachedProfile = profile
+            } else {
+                val profile = Profile(username = user.username, email = user.email, id = user.uid)
+                profileViewModel.insertProfile(profile)
+                cachedProfile = profile
+            }
 
-        Executors.newSingleThreadExecutor().execute {
-            val future = Glide.with(requireContext())
-                .downloadOnly()
-                .load(user.profileImageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+            Executors.newSingleThreadExecutor().execute {
+                val future = Glide.with(requireContext())
+                    .downloadOnly()
+                    .load(cachedProfile?.profileImageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
 
-            try {
-                val file = future.get()
-                cachedImagePath = file.absolutePath
-            } catch (e: Exception) {
-                e.printStackTrace()
+                try {
+                    val file = future.get()
+                    cachedImagePath = file.absolutePath
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -74,14 +88,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val profileImageView = view?.findViewById<ImageView>(R.id.profileImageView)
 
         usernameTextView?.text = user.username
-        if (user.profileImageUrl?.isNotEmpty() == true) {
+        if (cachedProfile?.profileImageUrl?.isNotEmpty() == true) {
             cachedImagePath?.let {
                 Glide.with(this)
                     .load(it)
                     .into(profileImageView!!)
             } ?: run {
                 Glide.with(this)
-                    .load(user.profileImageUrl)
+                    .load(cachedProfile?.profileImageUrl)
                     .into(profileImageView!!)
             }
         }
