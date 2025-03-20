@@ -27,7 +27,7 @@
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputOutlinedStyle"
             android:layout_width="100dp"
-            android:layout_height="50dp"
+            android:layout_height="62dp"
             android:layout_marginEnd="10dp"
             android:hint="יחידות מידה">
 
@@ -35,22 +35,22 @@
                 android:id="@+id/ingredientMenu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="16dp"
-                android:inputType="none"
+                android:clickable="true"
                 android:focusable="false"
-                android:clickable="true" />
+                android:inputType="none"
+                android:textSize="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputOutlinedStyle"
             android:layout_width="90dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:hint="שם">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nameInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
