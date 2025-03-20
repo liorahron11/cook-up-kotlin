@@ -12,9 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cookup.R
+import com.example.cookup.models.Recipe
 import com.example.cookup.services.FirestoreService
 import com.example.cookup.view_models.AuthViewModel
 
@@ -51,7 +53,7 @@ class RecipeGridFragment : Fragment() {
                     showNoRecipesMessage(true)
                 } else {
                     adapter = RecipeAdapter(recipes) { recipe ->
-                        Toast.makeText(requireContext(), "Clicked: ${recipe.title}", Toast.LENGTH_SHORT).show()
+                        navigateToRecipeDetails(recipe)
                     }
                     recyclerView.adapter = adapter
                     showNoRecipesMessage(false)
@@ -100,5 +102,10 @@ class RecipeGridFragment : Fragment() {
 
     fun dpToPx(dp: Int, context: Context): Int {
         return (dp * context.resources.displayMetrics.density).toInt()
+    }
+
+    fun navigateToRecipeDetails(recipe: Recipe) {
+        val action = ProfileFragmentDirections.actionProfileFragmentToRecipeDetailsFragment(recipe)
+        findNavController().navigate(action)
     }
 }

@@ -1,12 +1,15 @@
 package com.example.cookup.models
 
+import android.os.Parcelable
 import com.example.cookup.enums.EIngredientUnit
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Ingredient(
     val quantity: Int,
     val unit: EIngredientUnit?,
     val name: String
-){
+) : Parcelable{
 
     constructor() : this(0, null, "")
 
