@@ -32,13 +32,14 @@ class RecipeDetailsFragment : Fragment() {
         val recipeIngredientsTextView = view.findViewById<TextView>(R.id.recipeIngredientsTextView)
         val recipeInstructionsTextView = view.findViewById<TextView>(R.id.recipeInstructionsTextView)
 
-        // Set Recipe Data
         recipeTitleTextView.text = recipe.title
         recipeDescriptionTextView.text = recipe.description
         recipeIngredientsTextView.text = recipe.ingredients.joinToString("\n") { "• ${it.name} (${it.quantity} ${it.unit})" }
         recipeInstructionsTextView.text = recipe.instructions
 
-        // Load Image
-        Glide.with(requireContext()).load(recipe.image).into(recipeImageView)
+        Glide.with(requireContext())
+            .load(recipe.image)
+            .placeholder(R.drawable.default_recipe)
+            .into(recipeImageView)
     }
 }
