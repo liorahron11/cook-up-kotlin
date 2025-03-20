@@ -1,54 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.recyclerview.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recipeRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="@color/white">
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/recipeRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:layoutDirection="rtl"
-        android:scrollbars="vertical"/>
-
-    <RelativeLayout
-        android:id="@+id/noRecipes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/noRecipesImage"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/recipe_book"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:id="@+id/noRecipesText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="אין מתכונים להצגה"
-            android:textSize="16sp"
-            android:layout_below="@id/noRecipesImage"
-            android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
-
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-    android:id="@+id/progressBar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:indeterminate="true"
-    app:indicatorSize="48dp"
-    app:trackThickness="4dp"
-    app:trackColor="@color/gray"
-    app:indicatorColor="@color/dark_green"
-    android:visibility="gone"/>
-</LinearLayout>
+    android:clipToPadding="false"
+    android:layoutDirection="rtl"
+    android:scrollbars="vertical"/>

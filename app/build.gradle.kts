@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -61,6 +62,11 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.sqlite:sqlite:2.3.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
