@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="top"
-    android:padding="16dp"
     android:background="@color/white">
 
     <LinearLayout
@@ -46,9 +45,9 @@
         android:layout_marginBottom="16sp"
         android:textStyle="bold"/>
 
-    <com.google.android.material.divider.MaterialDivider
+    <FrameLayout
+        android:id="@+id/gridFragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:dividerInsetStart="16dp"
-        app:dividerInsetEnd="16dp"/>
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

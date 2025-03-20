@@ -49,7 +49,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val profileImageUrl = sharedPref.getString("profileImageUrl", "").toString()
 
         if (uid.isNotEmpty()) {
-            _user.value = User(uid, email, username, profileImageUrl)
+            _user.value = User(uid, username, email, profileImageUrl)
         }
 
         _loginStatus.value = _user.value != null

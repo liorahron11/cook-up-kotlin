@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cookup.R
 import com.example.cookup.enums.EIngredientUnit

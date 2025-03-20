@@ -1,7 +1,10 @@
 package com.example.cookup.models
 
+import android.os.Parcelable
 import com.google.firebase.Timestamp
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Recipe(
     val id: String = "",
     val timestamp: Timestamp = Timestamp.now(),
@@ -13,4 +16,4 @@ data class Recipe(
     val comments: List<Comment> = emptyList(),
     val likes: List<String> = emptyList(),
     val image: String = ""
-)
+) : Parcelable

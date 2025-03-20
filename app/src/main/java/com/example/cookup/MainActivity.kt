@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.cookup.view_models.AuthViewModel
 import com.example.cookup.ui.login.LoginActivity
+import com.example.cookup.ui.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.getValue
 
