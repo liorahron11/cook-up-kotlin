@@ -1,8 +1,10 @@
 package com.example.cookup.room.repositories
 
 import android.content.Context
+import com.example.cookup.interfaces.SpoonacularApi
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.RecipeWithUser
+import com.example.cookup.models.toAppRecipe
 import com.example.cookup.room.RecipeRemoteDataSource
 import com.example.cookup.room.databases.RecipeDatabase
 import com.example.cookup.room.entities.RecipeEntity
@@ -15,11 +17,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
-class RecipeRepository(context: Context, private val remoteDataSource: RecipeRemoteDataSource) {
+class RecipeRepository(context: Context, private val remoteDataSource: RecipeRemoteDataSource, private val spoonacularApi: SpoonacularApi) {
     private val recipeDao = RecipeDatabase.getDatabase(context).recipeDao()
 
-    val recipesFlow: Flow<List<Recipe>> = recipeDao.getAllRecipes()
-        .map { it.map { entity -> entity.toRecipe() } }
+    val localRecipesFlow: Flow<List<Recipe>> = recipeDao.getAllRecipes()
+        .map { list -> list.map { it.toRecipe() } }
 
     suspend fun refreshRecipesFromRemote() {
         val recipes = remoteDataSource.fetchRecipes().first()
@@ -64,7 +66,7 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
         }
     }
 
-    val recipesWithUserFlow: Flow<List<RecipeWithUser>> = recipesFlow
+    val localRecipesWithUserFlow: Flow<List<RecipeWithUser>> = localRecipesFlow
         .mapLatest { recipes ->
             coroutineScope {
                 val recipeWithUserList = recipes.map { recipe ->
@@ -79,4 +81,5 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
                 recipeWithUserList.awaitAll()
             }
         }
+
 }

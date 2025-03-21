@@ -3,6 +3,7 @@ package com.example.cookup.room.view_models
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cookup.models.SpoonacularClient
 import com.example.cookup.room.RecipeRemoteDataSource
 import com.example.cookup.room.entities.RecipeEntity
 import com.example.cookup.room.repositories.RecipeRepository
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = RecipeRepository(application, RecipeRemoteDataSource())
+    private val repository = RecipeRepository(application, RecipeRemoteDataSource(), SpoonacularClient.create())
 
     fun insertRecipe(recipe: RecipeEntity) {
         viewModelScope.launch {

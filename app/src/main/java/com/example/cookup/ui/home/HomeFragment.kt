@@ -56,7 +56,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refresh()
+            viewModel.fetchAllData()
         }
 
         lifecycleScope.launchWhenStarted {
