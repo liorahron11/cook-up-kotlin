@@ -7,7 +7,7 @@ import com.example.cookup.models.Recipe
 import com.example.cookup.services.FirestoreService
 import com.google.firebase.storage.FirebaseStorage
 
-class RecipeViewModel : ViewModel() {
+class CreateRecipeViewModel : ViewModel() {
     private val firestoreService = FirestoreService()
     private val storage = FirebaseStorage.getInstance().reference
 

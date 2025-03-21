@@ -66,7 +66,7 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
 
     fun getIngredientData(): Ingredient? {
         if (quantity.text.toString().isNotEmpty() && ingredientUnit.toString().isNotEmpty() && name.text?.isNotEmpty() == true) {
-            return Ingredient(quantity.text.toString().toInt(), ingredientUnit, name.text.toString())
+            return Ingredient(quantity.text.toString().toDouble(), ingredientUnit, name.text.toString())
         }
 
         return null

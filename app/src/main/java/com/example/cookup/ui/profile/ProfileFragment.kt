@@ -155,17 +155,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             cachedProfile?.id.toString(), onSuccess = { recipes ->
                 if (!recipes.isEmpty()) {
                     cacheRecipes(recipes)
+                    userRecipes = recipes
                     openRecipeGridFragment()
                 } else {
                     showNoRecipesMessage(true)
+                    userRecipes = recipes
                 }
 
-                userRecipes = recipes
                 setRecipesCount()
                 setLoading(false)
             },
             onFailure = { error ->
                 Toast.makeText(requireContext(), "שגיאה", Toast.LENGTH_SHORT).show()
+                userRecipes = emptyList()
                 setLoading(false)
             }
         )

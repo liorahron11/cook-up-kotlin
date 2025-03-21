@@ -8,7 +8,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.cookup.view_models.AuthViewModel
 import com.example.cookup.ui.login.LoginActivity
-import com.example.cookup.ui.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.getValue
 
@@ -18,12 +17,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if the user is logged in
         val sharedPref = getSharedPreferences("CookUpPrefs", MODE_PRIVATE)
         val loggedEmail = sharedPref.getString("email", "").toString()
 
         if (loggedEmail.isEmpty()) {
-            // Redirect to LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
@@ -47,12 +44,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
-                R.id.searchFragment -> {
-                    if (navController.currentDestination?.id != R.id.searchFragment) {
-                        navController.navigate(R.id.searchFragment)
-                    }
-                    true
-                }
                 R.id.createRecipeFragment -> {
                     if (navController.currentDestination?.id != R.id.createRecipeFragment) {
                         navController.navigate(R.id.createRecipeFragment)
@@ -71,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         authViewModel.loginStatus.observe(this) { isLoggedIn ->
             if (!isLoggedIn) {
-                // User logged out, redirect to LoginActivity
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()

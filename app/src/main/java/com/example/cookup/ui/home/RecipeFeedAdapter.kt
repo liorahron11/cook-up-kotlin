@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -46,6 +47,10 @@ class RecipeFeedAdapter(
             Glide.with(this).load(recipe.image)
                 .placeholder(R.drawable.default_recipe)
                 .into(findViewById<ImageView>(R.id.recipeImageView))
+
+            if (user?.uid == "Spoonacular") {
+                itemView.findViewById<LinearLayout>(R.id.likeContainer).visibility = View.GONE
+            }
 
             itemView.findViewById<View>(R.id.username).setOnClickListener {
                 onUserClick(user)

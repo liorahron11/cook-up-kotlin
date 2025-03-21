@@ -1,7 +1,5 @@
 package com.example.cookup.ui.create_recipe
 
-import android.R.attr.height
-import android.R.attr.width
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -19,15 +17,17 @@ import com.example.cookup.R
 import com.example.cookup.databinding.FragmentCreateRecipeBinding
 import com.example.cookup.models.Ingredient
 import com.example.cookup.models.Recipe
+import com.example.cookup.room.view_models.RecipeViewModel
 import com.example.cookup.ui.shared.IngredientInputFragment
-import com.example.cookup.view_models.RecipeViewModel
+import com.example.cookup.view_models.CreateRecipeViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import java.util.UUID
 
 class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
     private lateinit var binding: FragmentCreateRecipeBinding
-    private val viewModel: RecipeViewModel by viewModels()
+    private val createRecipeViewModel: CreateRecipeViewModel by viewModels()
+    private val recipeViewModel: RecipeViewModel by viewModels()
     private var imageUri: Uri? = null
     private var ingredientCount = 0
 
@@ -81,7 +81,7 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
 
         setLoading(true)
         if (imageUri != null) {
-            viewModel.uploadImage(imageUri!!, recipeId) { imageUrl ->
+            createRecipeViewModel.uploadImage(imageUri!!, recipeId) { imageUrl ->
                 if (imageUrl != null) {
                     val recipe = Recipe(
                         id = recipeId,
@@ -156,10 +156,11 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
     }
 
     private fun uploadRecipe(recipe: Recipe) {
-        viewModel.addRecipe(recipe) { success ->
+        createRecipeViewModel.addRecipe(recipe) { success ->
             setLoading(false)
             if (success) {
                 Toast.makeText(context, "המתכון נוצר בהצלחה", Toast.LENGTH_SHORT).show()
+                recipeViewModel.deleteRecipesByUser(recipe.senderId)
                 findNavController().navigate(R.id.action_createRecipeFragment_to_profileFragment)
             } else {
                 Toast.makeText(context, "שגיאה ביצירת מתכון", Toast.LENGTH_SHORT).show()
@@ -167,7 +168,3 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
         }
     }
 }
-
-
-
-//TODO: ADD INGREDIENTS, DESIGN BETTER

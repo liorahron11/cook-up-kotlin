@@ -12,8 +12,8 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
     suspend fun getRecipe(recipeId: String): RecipeEntity?
 
-    @Delete
-    suspend fun deleteRecipe(recipe: RecipeEntity)
+    @Query("DELETE FROM recipes WHERE senderId = :userId")
+    suspend fun deleteRecipesByUser(userId: String)
 
     @Query("SELECT * FROM recipes WHERE senderId = :senderId")
     suspend fun getRecipesBySenderId(senderId: String): List<RecipeEntity>
