@@ -8,12 +8,6 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/searchFragment"
-        android:icon="@drawable/ic_search"
-        android:title="חיפוש"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/createRecipeFragment"
         android:icon="@drawable/ic_add"
         android:title="יצירה"
