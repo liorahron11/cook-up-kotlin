@@ -48,9 +48,9 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
         }
     }
 
-    suspend fun deleteRecipe(recipe: RecipeEntity) {
+    suspend fun deleteRecipesByUser(userId: String) {
         withContext(Dispatchers.IO) {
-            recipeDao.deleteRecipe(recipe)
+            recipeDao.deleteRecipesByUser(userId)
         }
     }
 

@@ -33,9 +33,9 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun deleteRecipe(recipe: RecipeEntity) {
+    fun deleteRecipesByUser(userId: String) {
         viewModelScope.launch {
-            repository.deleteRecipe(recipe)
+            repository.deleteRecipesByUser(userId)
         }
     }
 
