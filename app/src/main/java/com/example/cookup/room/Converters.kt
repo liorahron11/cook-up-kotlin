@@ -1,7 +1,6 @@
 package com.example.cookup.room
 
 import androidx.room.TypeConverter
-import com.example.cookup.models.Comment
 import com.example.cookup.models.Ingredient
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -17,17 +16,6 @@ class Converters {
     @TypeConverter
     fun toIngredientsList(value: String): List<Ingredient> {
         val listType = object : TypeToken<List<Ingredient>>() {}.type
-        return gson.fromJson(value, listType)
-    }
-
-    @TypeConverter
-    fun fromCommentsList(value: List<Comment>): String {
-        return gson.toJson(value)
-    }
-
-    @TypeConverter
-    fun toCommentsList(value: String): List<Comment> {
-        val listType = object : TypeToken<List<Comment>>() {}.type
         return gson.fromJson(value, listType)
     }
 

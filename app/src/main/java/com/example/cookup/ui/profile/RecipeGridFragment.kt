@@ -16,7 +16,7 @@ class RecipeGridFragment : Fragment() {
     private val gson = Gson()
     private lateinit var recyclerView: RecyclerView
     private lateinit var recipes: List<Recipe>
-    private var adapter: RecipeAdapter? = null
+    private var adapter: RecipeGridAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,7 +33,7 @@ class RecipeGridFragment : Fragment() {
         arguments?.getString("recipesJson")?.let { json ->
             recipes = gson.fromJson(json, Array<Recipe>::class.java).toList()
             if (recipes.isNotEmpty()) {
-                adapter = RecipeAdapter(recipes) { recipe ->
+                adapter = RecipeGridAdapter(recipes) { recipe ->
                     navigateToRecipeDetails(recipe)
                 }
                 recyclerView.adapter = adapter

@@ -2,7 +2,9 @@ package com.example.cookup.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class User(
     val uid: String = "",
     val username: String = "",

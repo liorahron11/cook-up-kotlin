@@ -3,7 +3,9 @@ package com.example.cookup.models
 import android.os.Parcelable
 import com.example.cookup.enums.EIngredientUnit
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 data class Ingredient(
     val quantity: Int,

@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target
 import com.example.cookup.R
-import com.example.cookup.models.Comment
 import com.example.cookup.models.Ingredient
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.User
@@ -60,7 +59,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         profileViewModel.getProfile { profile ->
-            if (profile != null) {
+            if (profile != null && profile.id == user.uid) {
                 cachedProfile = profile
             } else {
                 val profile = Profile(username = user.username, email = user.email, id = user.uid)
@@ -94,8 +93,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         progressBar = view.findViewById(R.id.progressBar)
         profileLayout = view.findViewById(R.id.profileLayout)
         val settingButton = view.findViewById<Button>(R.id.settingButton)
-        settingButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_ProfileSettingsFragment)
+        if (user.uid !== authViewModel.user.value?.uid) {
+            settingButton.visibility = View.GONE
+        } else {
+            settingButton.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_ProfileSettingsFragment)
+            }
         }
 
         authViewModel.updateStatus.observe(viewLifecycleOwner) { success ->
@@ -105,7 +108,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         setLoading(true)
-        recipeViewModel.getRecipesBySenderId(authViewModel.user.value?.uid.toString()) { recipes ->
+        recipeViewModel.getRecipesBySenderId(user.uid) { recipes ->
             if (recipes.isNotEmpty()) {
                 userRecipes = parseCachedRecipes(recipes)
                 setRecipesCount()
@@ -177,7 +180,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 description = recipe.description,
                 instructions = recipe.instructions,
                 ingredients = Gson().toJson(recipe.ingredients),
-                comments = Gson().toJson(recipe.comments),
                 likes = Gson().toJson(recipe.likes),
                 image = recipe.image
             )
@@ -199,7 +201,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     description = recipe.description,
                     instructions = recipe.instructions,
                     ingredients = gson.fromJson(recipe.ingredients, Array<Ingredient>::class.java).toList(),
-                    comments = gson.fromJson(recipe.comments, Array<Comment>::class.java).toList(),
                     likes = gson.fromJson(recipe.likes, Array<String>::class.java).toList(),
                     image = recipe.image
                 )

@@ -6,7 +6,7 @@ import com.example.cookup.room.Converters
 import com.example.cookup.room.dao.RecipeDao
 import com.example.cookup.room.entities.RecipeEntity
 
-@Database(entities = [RecipeEntity::class], version = 1, exportSchema = false)
+@Database(entities = [RecipeEntity::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RecipeDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao
@@ -21,7 +21,8 @@ abstract class RecipeDatabase : RoomDatabase() {
                     context.applicationContext,
                     RecipeDatabase::class.java,
                     "recipe_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

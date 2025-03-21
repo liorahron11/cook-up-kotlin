@@ -5,7 +5,14 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.cookup.ui.home.HomeFragment"/>
+        android:name="com.example.cookup.ui.home.HomeFragment">
+        <action
+            android:id="@+id/action_HomeFragment_to_ProfileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_RecipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchFragment"
