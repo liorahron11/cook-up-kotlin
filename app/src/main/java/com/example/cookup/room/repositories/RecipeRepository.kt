@@ -2,6 +2,7 @@ package com.example.cookup.room.repositories
 
 import android.content.Context
 import com.example.cookup.models.Recipe
+import com.example.cookup.models.RecipeWithUser
 import com.example.cookup.room.RecipeRemoteDataSource
 import com.example.cookup.room.databases.RecipeDatabase
 import com.example.cookup.room.entities.RecipeEntity
@@ -73,4 +74,12 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
             recipeDao.insertRecipes(recipes)
         }
     }
+
+    val recipesWithUserFlow: Flow<List<RecipeWithUser>> = recipesFlow
+        .mapLatest { recipes ->
+            recipes.map { recipe ->
+                val user = remoteDataSource.getCachedUser(recipe.senderId)
+                RecipeWithUser(recipe, user)
+            }
+        }
 }

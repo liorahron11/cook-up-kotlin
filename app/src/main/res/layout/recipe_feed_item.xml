@@ -1,25 +1,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:layout_marginBottom="30dp"
     android:gravity="center">
 
-<com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        android:layout_margin="8dp">
+        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:layoutDirection="rtl"
+        android:gravity="start">
 
-        <LinearLayout
-            android:padding="16dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/userAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/profile_image_placeholder"
+            android:contentDescription="User profile image" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_gravity="center"
+            android:text="User Name" />
+
+
+    </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/recipeImageView"
+                android:src="@drawable/default_recipe"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop" />
@@ -37,7 +56,4 @@
                 android:textSize="14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
 </LinearLayout>
