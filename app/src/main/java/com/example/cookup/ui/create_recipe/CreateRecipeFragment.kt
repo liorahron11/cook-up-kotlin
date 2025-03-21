@@ -91,7 +91,6 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
                         description = description,
                         instructions = instructions,
                         ingredients = ingredients,
-                        comments = emptyList(),
                         likes = emptyList(),
                         image = imageUrl
                     )
@@ -111,7 +110,6 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
                 description = description,
                 instructions = instructions,
                 ingredients = ingredients,
-                comments = emptyList(),
                 likes = emptyList(),
                 image = ""
             )

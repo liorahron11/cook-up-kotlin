@@ -8,6 +8,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 class FirestoreService {
 
@@ -114,4 +118,20 @@ class FirestoreService {
                 onFailure(exception.message ?: "שגיאה בשליפת מתכוני המשתמש")
             }
     }
+
+        fun fetchFeedRecipes(): Flow<List<Recipe>> = callbackFlow {
+            val listener = firestore.collection("recipes")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null || snapshot == null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val recipes = snapshot.documents.mapNotNull { it.toObject(Recipe::class.java) }
+                    trySend(recipes)
+                }
+
+            awaitClose { listener.remove() }
+        }
 }

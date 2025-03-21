@@ -11,7 +11,6 @@ data class RecipeEntity(
     val description: String,
     val instructions: String,
     val ingredients: String,
-    val comments: String,
     val likes: String,
     val image: String
 )

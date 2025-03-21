@@ -5,6 +5,7 @@ plugins {
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -67,6 +68,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.sqlite:sqlite:2.3.1")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("com.google.dagger:hilt-android:2.48")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -10,10 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.cookup.models.Recipe
 import com.example.cookup.R
 
-class RecipeAdapter(
+class RecipeGridAdapter(
     private val recipes: List<Recipe>,
     private val onClick: (Recipe) -> Unit
-) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+) : RecyclerView.Adapter<RecipeGridAdapter.RecipeViewHolder>() {
 
     class RecipeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val imageView: ImageView = view.findViewById(R.id.recipeImage)

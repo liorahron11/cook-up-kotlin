@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.Target
 import com.example.cookup.R
-import com.example.cookup.models.Comment
 import com.example.cookup.models.Ingredient
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.User
@@ -177,7 +176,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 description = recipe.description,
                 instructions = recipe.instructions,
                 ingredients = Gson().toJson(recipe.ingredients),
-                comments = Gson().toJson(recipe.comments),
                 likes = Gson().toJson(recipe.likes),
                 image = recipe.image
             )
@@ -199,7 +197,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     description = recipe.description,
                     instructions = recipe.instructions,
                     ingredients = gson.fromJson(recipe.ingredients, Array<Ingredient>::class.java).toList(),
-                    comments = gson.fromJson(recipe.comments, Array<Comment>::class.java).toList(),
                     likes = gson.fromJson(recipe.likes, Array<String>::class.java).toList(),
                     image = recipe.image
                 )
