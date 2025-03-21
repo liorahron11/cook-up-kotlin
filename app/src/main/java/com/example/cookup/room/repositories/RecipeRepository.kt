@@ -8,34 +8,23 @@ import com.example.cookup.room.databases.RecipeDatabase
 import com.example.cookup.room.entities.RecipeEntity
 import com.example.cookup.utils.toEntity
 import com.example.cookup.utils.toRecipe
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class RecipeRepository(context: Context, private val remoteDataSource: RecipeRemoteDataSource) {
     private val recipeDao = RecipeDatabase.getDatabase(context).recipeDao()
-    private val firestore = FirebaseFirestore.getInstance()
-    private val recipeCollection = firestore.collection("recipes")
 
-    /**
-     * Flow of all recipes from Room cache (updated after fetch from Firestore).
-     */
     val recipesFlow: Flow<List<Recipe>> = recipeDao.getAllRecipes()
         .map { it.map { entity -> entity.toRecipe() } }
 
-    /**
-     * Fetches latest recipes from Firestore and updates the local cache.
-     */
     suspend fun refreshRecipesFromRemote() {
-        remoteDataSource.fetchRecipes()
-            .catch { it.printStackTrace() }
-            .collect { remoteRecipes ->
-                val entities = remoteRecipes.map { it.toEntity() }
-                recipeDao.insertRecipes(entities)
-            }
+        val recipes = remoteDataSource.fetchRecipes().first()
+        val entities = recipes.map { it.toEntity() }
+        recipeDao.insertRecipes(entities)
     }
 
 
@@ -51,9 +40,9 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
         }
     }
 
-    suspend fun getAllRecipes(): List<RecipeEntity> {
+    suspend fun getAllRecipes(): Flow<List<RecipeEntity>> {
         return withContext(Dispatchers.IO) {
-            recipeDao.getAllRecipes() as List<RecipeEntity>
+            recipeDao.getAllRecipes()
         }
     }
 
@@ -77,9 +66,17 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
 
     val recipesWithUserFlow: Flow<List<RecipeWithUser>> = recipesFlow
         .mapLatest { recipes ->
-            recipes.map { recipe ->
-                val user = remoteDataSource.getCachedUser(recipe.senderId)
-                RecipeWithUser(recipe, user)
+            coroutineScope {
+                val recipeWithUserList = recipes.map { recipe ->
+                    async {
+                        val user = remoteDataSource.getCachedUser(recipe.senderId)
+                            ?: remoteDataSource.getUserById(recipe.senderId)
+
+                        RecipeWithUser(recipe, user)
+                    }
+                }
+
+                recipeWithUserList.awaitAll()
             }
         }
 }

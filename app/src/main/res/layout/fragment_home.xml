@@ -19,12 +19,34 @@
             app:titleTextColor="@color/white"
             app:layout_scrollFlags="scroll|enterAlways" />
 
+        <LinearLayout
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/white">
 
-        <LinearLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/white">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorSize="48dp"
+                app:trackThickness="4dp"
+                app:trackColor="@color/gray"
+                android:layout_gravity="center"
+                app:indicatorColor="@color/dark_green"/>
+
+        </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/white">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -35,16 +57,5 @@
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/recipe_feed_item" />
-
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            app:indicatorSize="48dp"
-            app:trackThickness="4dp"
-            app:trackColor="@color/gray"
-            android:layout_gravity="center"
-            app:indicatorColor="@color/dark_green"/>
-    </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>
