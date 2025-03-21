@@ -13,10 +13,12 @@ import com.example.cookup.models.RecipeWithUser
 import com.example.cookup.R
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.User
+import com.google.firebase.auth.FirebaseAuth
 
 class RecipeFeedAdapter(
     private val onRecipeClick: (Recipe) -> Unit,
-    private val onUserClick: (User?) -> Unit
+    private val onUserClick: (User?) -> Unit,
+    private val onLikeClick: (Recipe) -> Unit
 ) : ListAdapter<RecipeWithUser, RecipeFeedAdapter.RecipeViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -51,8 +53,18 @@ class RecipeFeedAdapter(
             itemView.findViewById<View>(R.id.userAvatar).setOnClickListener {
                 onUserClick(user)
             }
-            itemView.setOnClickListener {
+            itemView.findViewById<View>(R.id.itemLayout).setOnClickListener {
                 onRecipeClick(recipe)
+            }
+            itemView.findViewById<ImageView>(R.id.likeButton).apply {
+                val likeCount = recipe.likes.size
+                val liked = recipe.likes.contains(FirebaseAuth.getInstance().currentUser?.uid)
+
+                itemView.findViewById<ImageView>(R.id.likeButton).setImageResource(if (liked) R.drawable.ic_like_full else R.drawable.ic_like_outline)
+                itemView.findViewById<TextView>(R.id.likeCount).text = likeCount.toString()
+                setOnClickListener {
+                    onLikeClick(recipe)
+                }
             }
         }
     }

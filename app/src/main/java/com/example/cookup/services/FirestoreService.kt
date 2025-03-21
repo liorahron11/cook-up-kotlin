@@ -101,7 +101,8 @@ class FirestoreService {
 
 
     fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firestore.collection("recipes").add(recipe)
+        firestore.collection("recipes").document(recipe.id)
+            .set(recipe)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onFailure(e) }
     }

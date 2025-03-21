@@ -27,6 +27,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 val bundle = bundleOf("user" to user)
                 findNavController().navigate(R.id.profileFragment, bundle)
             }
+        },
+        onLikeClick =  { recipe ->
+            viewModel.toggleLike(recipe)
         }
     )
     private lateinit var progressBar: LinearLayout

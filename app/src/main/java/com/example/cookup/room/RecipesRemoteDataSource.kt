@@ -51,4 +51,12 @@ class RecipeRemoteDataSource {
             null
         }
     }
+
+    suspend fun updateRecipeLikes(recipeId: String, likes: List<String>) {
+        val recipeCollection = FirebaseFirestore.getInstance().collection("recipes")
+
+        recipeCollection.document(recipeId)
+            .update("likes", likes)
+            .await()
+    }
 }
