@@ -3,9 +3,11 @@ package com.example.cookup.ui.home
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -15,7 +17,18 @@ import com.example.cookup.room.view_models.FeedViewModel
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val viewModel: FeedViewModel by viewModels()
-    private lateinit var adapter: RecipeFeedAdapter
+    private val adapter = RecipeFeedAdapter (
+        onRecipeClick = { recipe ->
+            val action = HomeFragmentDirections.actionHomeFragmentToRecipeDetailsFragment(recipe)
+            findNavController().navigate(action)
+        },
+        onUserClick = { user ->
+            user?.let {
+                val bundle = bundleOf("user" to user)
+                findNavController().navigate(R.id.profileFragment, bundle)
+            }
+        }
+    )
     private lateinit var progressBar: LinearLayout
     private lateinit var recycler: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -26,7 +39,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
 
         setLoading(true)
-        adapter = RecipeFeedAdapter()
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 

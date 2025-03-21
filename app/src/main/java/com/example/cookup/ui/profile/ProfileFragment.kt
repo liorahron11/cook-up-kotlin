@@ -59,7 +59,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         profileViewModel.getProfile { profile ->
-            if (profile != null) {
+            if (profile != null && profile.id == user.uid) {
                 cachedProfile = profile
             } else {
                 val profile = Profile(username = user.username, email = user.email, id = user.uid)
@@ -93,8 +93,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         progressBar = view.findViewById(R.id.progressBar)
         profileLayout = view.findViewById(R.id.profileLayout)
         val settingButton = view.findViewById<Button>(R.id.settingButton)
-        settingButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_ProfileSettingsFragment)
+        if (user.uid !== authViewModel.user.value?.uid) {
+            settingButton.visibility = View.GONE
+        } else {
+            settingButton.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_ProfileSettingsFragment)
+            }
         }
 
         authViewModel.updateStatus.observe(viewLifecycleOwner) { success ->
@@ -104,7 +108,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
 
         setLoading(true)
-        recipeViewModel.getRecipesBySenderId(authViewModel.user.value?.uid.toString()) { recipes ->
+        recipeViewModel.getRecipesBySenderId(user.uid) { recipes ->
             if (recipes.isNotEmpty()) {
                 userRecipes = parseCachedRecipes(recipes)
                 setRecipesCount()

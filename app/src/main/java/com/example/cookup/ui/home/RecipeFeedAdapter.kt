@@ -11,8 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cookup.models.RecipeWithUser
 import com.example.cookup.R
+import com.example.cookup.models.Recipe
+import com.example.cookup.models.User
 
-class RecipeFeedAdapter : ListAdapter<RecipeWithUser, RecipeFeedAdapter.RecipeViewHolder>(DIFF) {
+class RecipeFeedAdapter(
+    private val onRecipeClick: (Recipe) -> Unit,
+    private val onUserClick: (User?) -> Unit
+) : ListAdapter<RecipeWithUser, RecipeFeedAdapter.RecipeViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -39,13 +44,30 @@ class RecipeFeedAdapter : ListAdapter<RecipeWithUser, RecipeFeedAdapter.RecipeVi
             Glide.with(this).load(recipe.image)
                 .placeholder(R.drawable.default_recipe)
                 .into(findViewById<ImageView>(R.id.recipeImageView))
+
+            itemView.findViewById<View>(R.id.username).setOnClickListener {
+                onUserClick(user)
+            }
+            itemView.findViewById<View>(R.id.userAvatar).setOnClickListener {
+                onUserClick(user)
+            }
+            itemView.setOnClickListener {
+                onRecipeClick(recipe)
+            }
         }
     }
 
     companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<RecipeWithUser>() {
-            override fun areItemsTheSame(old: RecipeWithUser, new: RecipeWithUser) = old.recipe.id == new.recipe.id
-            override fun areContentsTheSame(old: RecipeWithUser, new: RecipeWithUser) = old == new
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<RecipeWithUser>() {
+            override fun areItemsTheSame(
+                oldItem: RecipeWithUser,
+                newItem: RecipeWithUser
+            ): Boolean = oldItem.recipe.id == newItem.recipe.id
+
+            override fun areContentsTheSame(
+                oldItem: RecipeWithUser,
+                newItem: RecipeWithUser
+            ): Boolean = oldItem == newItem
         }
     }
 }
