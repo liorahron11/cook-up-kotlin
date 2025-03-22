@@ -9,13 +9,28 @@
         android:gravity="end"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/recipeImageView"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_recipe" />
+            android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/recipeImageView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_recipe" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="16dp"
+                android:background="@drawable/circle_background"
+                android:contentDescription="מחק מתכון"
+                android:src="@android:drawable/ic_menu_delete" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

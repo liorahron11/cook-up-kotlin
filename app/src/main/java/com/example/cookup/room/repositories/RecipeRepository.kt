@@ -1,6 +1,7 @@
 package com.example.cookup.room.repositories
 
 import android.content.Context
+import android.util.Log
 import com.example.cookup.interfaces.SpoonacularApi
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.RecipeWithUser
@@ -63,6 +64,28 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
     suspend fun insertRecipes(recipes: List<RecipeEntity>) {
         withContext(Dispatchers.IO) {
             recipeDao.insertRecipes(recipes)
+        }
+    }
+
+    suspend fun deleteRecipesById(recipeId: String, callback: (Boolean, Int) -> Unit) {
+        try {
+            withContext(Dispatchers.IO) {
+                val deletedCount = recipeDao.deleteRecipesById(recipeId)
+
+                remoteDataSource.deleteRecipeById(
+                    recipeId,
+                    onSuccess = {
+                        callback(true, deletedCount)
+                    },
+                    onFailure = { e ->
+                        Log.e("RecipeRepository", "Error deleting recipe from Firestore", e)
+                        callback(false, deletedCount)
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error deleting recipe", e)
+            callback(false, 0)
         }
     }
 
