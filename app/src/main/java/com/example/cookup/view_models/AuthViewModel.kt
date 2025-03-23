@@ -197,4 +197,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             onFailure = { error -> _errorMessage.postValue(error) }
         )
     }
+
+    fun getLoggedInUser(): String? {
+        return auth.currentUser?.uid
+    }
 }

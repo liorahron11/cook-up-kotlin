@@ -96,6 +96,7 @@ class CreateRecipeFragment : Fragment(R.layout.fragment_create_recipe) {
                     )
 
                     uploadRecipe(recipe)
+                    findNavController().navigateUp()
                 } else {
                     setLoading(false)
                     Toast.makeText(context, "שגיאה בהעלאת התמונה", Toast.LENGTH_SHORT).show()

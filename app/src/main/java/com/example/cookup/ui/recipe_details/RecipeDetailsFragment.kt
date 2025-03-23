@@ -10,18 +10,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.cookup.R
 import com.example.cookup.models.Recipe
 import com.example.cookup.room.view_models.RecipeViewModel
+import com.example.cookup.view_models.AuthViewModel
 
 class RecipeDetailsFragment : Fragment() {
 
     private val args: RecipeDetailsFragmentArgs by navArgs()
-    private lateinit var viewModel: RecipeViewModel
+    private val viewModel: RecipeViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,9 +34,6 @@ class RecipeDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application))
-            .get(RecipeViewModel::class.java)
-
         val recipe: Recipe = args.recipe
         val recipeImageView = view.findViewById<ImageView>(R.id.recipeImageView)
         val recipeTitleTextView = view.findViewById<TextView>(R.id.recipeTitleTextView)
@@ -42,10 +41,11 @@ class RecipeDetailsFragment : Fragment() {
         val recipeIngredientsTextView = view.findViewById<TextView>(R.id.recipeIngredientsTextView)
         val recipeInstructionsTextView = view.findViewById<TextView>(R.id.recipeInstructionsTextView)
         val deleteButton = view.findViewById<ImageButton>(R.id.deleteButton)
+        val editButton = view.findViewById<ImageButton>(R.id.editButton)
 
         recipeTitleTextView.text = recipe.title
         recipeDescriptionTextView.text = recipe.description
-        recipeIngredientsTextView.text = recipe.ingredients.joinToString("\n") { "• ${it.name} (${it.quantity} ${it.unit})" }
+        recipeIngredientsTextView.text = recipe.ingredients.joinToString("\n") { "• ${it.name} (${it.quantity} ${it.unit?.hebrew})" }
         recipeInstructionsTextView.text = recipe.instructions
 
         Glide.with(requireContext())
@@ -53,8 +53,25 @@ class RecipeDetailsFragment : Fragment() {
             .placeholder(R.drawable.default_recipe)
             .into(recipeImageView)
 
-        deleteButton.setOnClickListener {
-            confirmDelete(recipe)
+        // Check if current user is the recipe owner
+        val currentUserId = authViewModel.getLoggedInUser()
+        val isOwner = currentUserId != null && currentUserId == recipe.senderId
+
+        // Only show edit/delete buttons for the recipe owner
+        if (isOwner) {
+            deleteButton.visibility = View.VISIBLE
+            editButton.visibility = View.VISIBLE
+
+            deleteButton.setOnClickListener {
+                confirmDelete(recipe)
+            }
+
+            editButton.setOnClickListener {
+                navigateToEditRecipe(recipe)
+            }
+        } else {
+            deleteButton.visibility = View.GONE
+            editButton.visibility = View.GONE
         }
     }
 
@@ -72,13 +89,23 @@ class RecipeDetailsFragment : Fragment() {
     private fun deleteRecipe(recipeId: String) {
         Toast.makeText(requireContext(), "מוחק מתכון...", Toast.LENGTH_SHORT).show()
 
-        viewModel.deleteRecipeById(recipeId) { success, deletedCount ->
+        viewModel.deleteRecipeById(recipeId) { success, _ ->
             if (success) {
-                Toast.makeText(requireContext(), "המתכון נמחק בהצלחה ($deletedCount)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "המתכון נמחק בהצלחה", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             } else {
                 Toast.makeText(requireContext(), "שגיאה במחיקת המתכון", Toast.LENGTH_LONG).show()
             }
+        }
+    }
+
+    private fun navigateToEditRecipe(recipe: Recipe) {
+        try {
+            val action = RecipeDetailsFragmentDirections.actionRecipeDetailsToEditRecipe(recipe)
+            findNavController().navigate(action)
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "שגיאת ניווט", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
         }
     }
 }
