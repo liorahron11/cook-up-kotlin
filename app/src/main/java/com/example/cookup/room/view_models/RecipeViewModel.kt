@@ -39,6 +39,14 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun deleteRecipeById(recipeId: String, callback: (Boolean, Int) -> Unit) {
+        viewModelScope.launch {
+            repository.deleteRecipesById(recipeId) { success, deletedCount ->
+                callback(success, deletedCount)
+            }
+        }
+    }
+
     fun getRecipesBySenderId(senderId: String, callback: (List<RecipeEntity>) -> Unit) {
         viewModelScope.launch {
             val recipes = repository.getRecipesBySenderId(senderId)

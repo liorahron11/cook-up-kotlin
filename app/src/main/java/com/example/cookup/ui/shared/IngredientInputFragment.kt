@@ -15,13 +15,14 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
 
     private var index: Int = 0
     private lateinit var quantity: TextInputEditText
-    private lateinit var ingredientUnit: EIngredientUnit
     private lateinit var name: TextInputEditText
+    private lateinit var dropdown: AutoCompleteTextView
+    private var ingredientUnit: EIngredientUnit? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            index = it.getInt("index")
+            index = it.getInt("index", 0)
         }
     }
 
@@ -31,11 +32,12 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
         val units = EIngredientUnit.entries.map { it.hebrew } // Get Hebrew names from enum
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, units)
 
-        val dropdown = view.findViewById<AutoCompleteTextView>(R.id.ingredientMenu)
+        dropdown = view.findViewById(R.id.ingredientMenu)
         dropdown.setAdapter(adapter)
         dropdown.setOnClickListener {
             dropdown.showDropDown()
         }
+
         // Handle selection
         dropdown.setOnItemClickListener { _, _, position, _ ->
             ingredientUnit = EIngredientUnit.entries[position]
@@ -44,9 +46,29 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
         quantity = view.findViewById(R.id.quantityInput)
         name = view.findViewById(R.id.nameInput)
 
-
         view.findViewById<Button>(R.id.btnRemoveIngredient).setOnClickListener {
             removeFragment()
+        }
+
+        arguments?.let { args ->
+            val ingredientName = args.getString("name")
+            val quantityStr = args.getString("quantity")
+            val unitName = args.getString("unit")
+
+            if (ingredientName != null) {
+                name.setText(ingredientName)
+            }
+
+            if (quantityStr != null) {
+                quantity.setText(quantityStr)
+            }
+
+            if (unitName != null) {
+                EIngredientUnit.entries.find { it.hebrew == unitName }?.let { unit ->
+                    ingredientUnit = unit
+                    dropdown.setText(unit.hebrew, false)
+                }
+            }
         }
     }
 
@@ -65,11 +87,17 @@ class IngredientInputFragment : Fragment(R.layout.fragment_ingredient_input) {
     }
 
     fun getIngredientData(): Ingredient? {
-        if (quantity.text.toString().isNotEmpty() && ingredientUnit.toString().isNotEmpty() && name.text?.isNotEmpty() == true) {
-            return Ingredient(quantity.text.toString().toDouble(), ingredientUnit, name.text.toString())
+        val quantityText = quantity.text.toString()
+        val nameText = name.text.toString()
+
+        if (quantityText.isNotEmpty() && nameText.isNotEmpty() && ingredientUnit != null) {
+            return Ingredient(
+                quantityText.toDoubleOrNull() ?: 1.0,
+                ingredientUnit ?: EIngredientUnit.entries.first(),
+                nameText
+            )
         }
 
         return null
     }
-
 }

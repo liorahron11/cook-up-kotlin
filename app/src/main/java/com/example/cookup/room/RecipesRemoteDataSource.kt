@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class RecipeRemoteDataSource {
+    private val RECIPES_COLLECTION = "recipes"
+    private val USERS_COLLECTION = "users"
     private val db = FirebaseFirestore.getInstance()
     private val userCache = mutableMapOf<String, User>()
+
 
     suspend fun getCachedUser(userId: String): User? {
         return userCache[userId] ?: run {
@@ -22,7 +25,7 @@ class RecipeRemoteDataSource {
     }
 
     fun fetchRecipes(): Flow<List<Recipe>> = callbackFlow {
-        val listener = db.collection("recipes")
+        val listener = db.collection(RECIPES_COLLECTION)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null) {
@@ -40,7 +43,7 @@ class RecipeRemoteDataSource {
     suspend fun getUserById(userId: String): User? {
         return try {
             val snapshot = FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection(USERS_COLLECTION)
                 .document(userId)
                 .get()
                 .await()
@@ -53,10 +56,18 @@ class RecipeRemoteDataSource {
     }
 
     suspend fun updateRecipeLikes(recipeId: String, likes: List<String>) {
-        val recipeCollection = FirebaseFirestore.getInstance().collection("recipes")
+        val recipeCollection = FirebaseFirestore.getInstance().collection(RECIPES_COLLECTION)
 
         recipeCollection.document(recipeId)
             .update("likes", likes)
             .await()
+    }
+
+    fun deleteRecipeById(recipeId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(RECIPES_COLLECTION)
+            .document(recipeId)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onFailure(e) }
     }
 }

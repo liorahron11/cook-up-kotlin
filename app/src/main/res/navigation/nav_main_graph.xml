@@ -84,11 +84,24 @@
             app:destination="@id/recipeDetailsFragment" />
     </fragment>
 
-
     <fragment
         android:id="@+id/recipeDetailsFragment"
         android:name="com.example.cookup.ui.recipe_details.RecipeDetailsFragment"
         android:label="Recipe Details">
+        <argument
+            android:name="recipe"
+            app:argType="com.example.cookup.models.Recipe"
+            app:nullable="false"/>
+
+        <action
+            android:id="@+id/actionRecipeDetailsToEditRecipe"
+            app:destination="@id/editRecipeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editRecipeFragment"
+        android:name="com.example.cookup.ui.recipe_details.EditRecipeFragment"
+        android:label="EditRecipe">
         <argument
             android:name="recipe"
             app:argType="com.example.cookup.models.Recipe"
