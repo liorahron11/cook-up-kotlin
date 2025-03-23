@@ -5,7 +5,9 @@ import android.util.Log
 import com.example.cookup.interfaces.SpoonacularApi
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.RecipeWithUser
+import com.example.cookup.models.User
 import com.example.cookup.models.toAppRecipe
+import com.example.cookup.models.SpoonacularClient
 import com.example.cookup.room.RecipeRemoteDataSource
 import com.example.cookup.room.databases.RecipeDatabase
 import com.example.cookup.room.entities.RecipeEntity
@@ -15,21 +17,86 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 
-class RecipeRepository(context: Context, private val remoteDataSource: RecipeRemoteDataSource, private val spoonacularApi: SpoonacularApi) {
+class RecipeRepository(
+    context: Context,
+) {
     private val recipeDao = RecipeDatabase.getDatabase(context).recipeDao()
+    private val remoteDataSource: RecipeRemoteDataSource = RecipeRemoteDataSource()
+    private val spoonacularApi: SpoonacularApi = SpoonacularClient.create()
 
     val localRecipesFlow: Flow<List<Recipe>> = recipeDao.getAllRecipes()
         .map { list -> list.map { it.toRecipe() } }
 
+    val localRecipesWithUserFlow: Flow<List<RecipeWithUser>> = localRecipesFlow
+        .mapLatest { recipes ->
+            coroutineScope {
+                val recipeWithUserList = recipes.map { recipe ->
+                    async {
+                        val user = remoteDataSource.getCachedUser(recipe.senderId)
+                            ?: remoteDataSource.getUserById(recipe.senderId)
+
+                        RecipeWithUser(recipe, user)
+                    }
+                }
+
+                recipeWithUserList.awaitAll()
+            }
+        }
+
     suspend fun refreshRecipesFromRemote() {
-        val recipes = remoteDataSource.fetchRecipes().first()
-        val entities = recipes.map { it.toEntity() }
-        recipeDao.insertRecipes(entities)
+        val recipes = remoteDataSource.fetchRecipes()
+        val entities = recipes?.map { it.toEntity() }
+        recipeDao.clearAll()
+        recipeDao.insertRecipes(entities!!)
     }
 
+    suspend fun getSpoonacularRecipes(count: Int = 10): List<Recipe> = withContext(Dispatchers.IO) {
+        try {
+            val apiKey = "46bf4817e262473aac9ec46fbe20c296" // Better to store in a secure config
+            val response = spoonacularApi.getRandomRecipes(count, apiKey)
+            response.recipes.map { it.toAppRecipe() }
+        } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error fetching Spoonacular recipes", e)
+            throw e
+        }
+    }
+
+    fun wrapSpoonacularRecipes(recipes: List<Recipe>): List<RecipeWithUser> {
+        val fakeUser = User(
+            "Spoonacular",
+            "Spoonacular",
+            "Spoonacular",
+            "https://play-lh.googleusercontent.com/uOZlIZUJ7R79qs_J_a9cdxrJaGhHwqKTmika25Lp1vTeC1qe9lPQF5jalEFc8Htk7nQ"
+        )
+        return recipes.map { recipe ->
+            RecipeWithUser(recipe = recipe, user = fakeUser)
+        }
+    }
+
+    suspend fun toggleLike(recipe: Recipe, userId: String) = withContext(Dispatchers.IO) {
+        try {
+            val updatedLikes = if (recipe.likes.contains(userId)) {
+                recipe.likes - userId
+            } else {
+                recipe.likes + userId
+            }
+            val updatedRecipe = recipe.copy(likes = updatedLikes)
+
+            // Update local database
+            insertRecipe(updatedRecipe.toEntity())
+
+            // Update remote database
+            remoteDataSource.updateRecipeLikes(recipe.id, updatedLikes)
+        } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error toggling like", e)
+            throw e
+        }
+    }
 
     suspend fun insertRecipe(recipe: RecipeEntity) {
         withContext(Dispatchers.IO) {
@@ -88,21 +155,4 @@ class RecipeRepository(context: Context, private val remoteDataSource: RecipeRem
             callback(false, 0)
         }
     }
-
-    val localRecipesWithUserFlow: Flow<List<RecipeWithUser>> = localRecipesFlow
-        .mapLatest { recipes ->
-            coroutineScope {
-                val recipeWithUserList = recipes.map { recipe ->
-                    async {
-                        val user = remoteDataSource.getCachedUser(recipe.senderId)
-                            ?: remoteDataSource.getUserById(recipe.senderId)
-
-                        RecipeWithUser(recipe, user)
-                    }
-                }
-
-                recipeWithUserList.awaitAll()
-            }
-        }
-
 }

@@ -50,6 +50,8 @@ class RecipeFeedAdapter(
 
             if (user?.uid == "Spoonacular") {
                 itemView.findViewById<LinearLayout>(R.id.likeContainer).visibility = View.GONE
+            } else {
+                itemView.findViewById<LinearLayout>(R.id.likeContainer).visibility = View.VISIBLE
             }
 
             itemView.findViewById<View>(R.id.username).setOnClickListener {
