@@ -18,7 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
@@ -50,19 +49,15 @@ class RecipeRepository(
         }
 
     suspend fun refreshRecipesFromRemote() {
-        try {
-            val recipes = remoteDataSource.fetchRecipes().first()
-            val entities = recipes.map { it.toEntity() }
-            recipeDao.insertRecipes(entities)
-        } catch (e: Exception) {
-            Log.e("RecipeRepository", "Error refreshing recipes", e)
-            throw e
-        }
+        val recipes = remoteDataSource.fetchRecipes()
+        val entities = recipes?.map { it.toEntity() }
+        recipeDao.clearAll()
+        recipeDao.insertRecipes(entities!!)
     }
 
     suspend fun getSpoonacularRecipes(count: Int = 10): List<Recipe> = withContext(Dispatchers.IO) {
         try {
-            val apiKey = "165c6099f12842b1b3996b779d6fd6ef" // Better to store in a secure config
+            val apiKey = "46bf4817e262473aac9ec46fbe20c296" // Better to store in a secure config
             val response = spoonacularApi.getRandomRecipes(count, apiKey)
             response.recipes.map { it.toAppRecipe() }
         } catch (e: Exception) {
