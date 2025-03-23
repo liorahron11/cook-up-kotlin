@@ -1,0 +1,108 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorSize="48dp"
+        app:trackThickness="4dp"
+        app:trackColor="@color/gray"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:indicatorColor="@color/dark_green"/>
+
+    <LinearLayout
+        android:id="@+id/profileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="top"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button.IconButton.Outlined"
+                android:id="@+id/settingButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:icon="@drawable/ic_settings"
+                app:iconTint="@color/black"
+                app:strokeWidth="0dp"
+                app:iconSize="30dp"
+                app:icon="@drawable/ic_settings"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profile_image_placeholder"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:layout_margin="20dp"/>
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/recipesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/gray"
+            android:layout_marginBottom="16sp"
+            android:textSize="12sp" />
+
+        <FrameLayout
+            android:id="@+id/gridFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:id="@+id/noRecipes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/noRecipesImage"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/recipe_book"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/noRecipesText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="אין מתכונים להצגה"
+                android:textSize="16sp"
+                android:layout_below="@id/noRecipesImage"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

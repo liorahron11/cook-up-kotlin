@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="פיד"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/createRecipeFragment"
+        android:icon="@drawable/ic_add"
+        android:title="יצירה"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="פרופיל"
+        app:showAsAction="ifRoom"/>
+
+</menu>

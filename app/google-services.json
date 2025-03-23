@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "811572348921",
+    "project_id": "cook-up-dbf13",
+    "storage_bucket": "cook-up-dbf13.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811572348921:android:61b1e23571213416135f28",
+        "android_client_info": {
+          "package_name": "com.example.cookup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDg1GjW458GLT53FvUA5-rb95CRU_1Muk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

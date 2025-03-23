@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Cook Up</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="edit_title">עריכת %1$s</string>
+</resources>

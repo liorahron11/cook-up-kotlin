@@ -1,0 +1,110 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/homeFragment">
+
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.cookup.ui.home.HomeFragment">
+        <action
+            android:id="@+id/action_HomeFragment_to_ProfileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_RecipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createRecipeFragment"
+        android:name="com.example.cookup.ui.create_recipe.CreateRecipeFragment"
+        android:label="Create">
+        <action
+            android:id="@+id/action_createRecipeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.cookup.ui.profile.ProfileFragment"
+        android:label="Profile"
+        app:defaultNavHost="true">
+        <argument
+            android:name="user"
+            app:argType="com.example.cookup.models.User"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+        <action
+            android:id="@+id/action_profileFragment_to_ProfileSettingsFragment"
+            app:destination="@id/profileSettingsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_RecipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment"/>
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/profileSettingsFragment"
+        android:name="com.example.cookup.ui.profile_settings.ProfileSettingsFragment"
+        android:label="profileSettings">
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_editFragment"
+            app:destination="@id/editFragment">
+            <argument
+                android:name="field"
+                app:argType="string"/>
+            <argument
+                android:name="fieldHebrewName"
+                app:argType="string"/>
+        </action>
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_updateProfileImageFragment"
+            app:destination="@id/updateProfileImageFragment">
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.cookup.ui.profile_settings.EditFragment"
+        android:label="Edit Field"/>
+
+    <fragment
+        android:id="@+id/updateProfileImageFragment"
+        android:name="com.example.cookup.ui.profile_settings.UpdateProfileImageFragment"
+        android:label="Update Profile Image"/>
+
+    <fragment
+        android:id="@+id/recipeGridFragment"
+        android:name="com.example.cookup.ui.profile.RecipeGridFragment"
+        android:label="Recipe Grid">
+
+        <action
+            android:id="@+id/actionRecipeGridToRecipeDetails"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipeDetailsFragment"
+        android:name="com.example.cookup.ui.recipe_details.RecipeDetailsFragment"
+        android:label="Recipe Details">
+        <argument
+            android:name="recipe"
+            app:argType="com.example.cookup.models.Recipe"
+            app:nullable="false"/>
+
+        <action
+            android:id="@+id/actionRecipeDetailsToEditRecipe"
+            app:destination="@id/editRecipeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editRecipeFragment"
+        android:name="com.example.cookup.ui.recipe_details.EditRecipeFragment"
+        android:label="EditRecipe">
+        <argument
+            android:name="recipe"
+            app:argType="com.example.cookup.models.Recipe"
+            app:nullable="false"/>
+    </fragment>
+</navigation>
