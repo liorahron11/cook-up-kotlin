@@ -5,12 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.RecipeWithUser
-import com.example.cookup.models.SpoonacularClient
-import com.example.cookup.models.User
-import com.example.cookup.models.toAppRecipe
-import com.example.cookup.room.RecipeRemoteDataSource
 import com.example.cookup.room.repositories.RecipeRepository
-import com.example.cookup.utils.toEntity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,21 +15,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FeedViewModel(application: Application) : AndroidViewModel(application) {
-    private val remoteDataSource = RecipeRemoteDataSource()
-    val spoonacularApi = SpoonacularClient.create()
-    private val repository = RecipeRepository(application, RecipeRemoteDataSource(), spoonacularApi)
+    private val repository = RecipeRepository(application)
+
+    private val _uiState = MutableStateFlow<FeedUiState>(FeedUiState.Loading)
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
-    private val _spoonacularFlow = MutableStateFlow<List<Recipe>>(emptyList())
-    val spoonacularFlow: StateFlow<List<Recipe>> = _spoonacularFlow
+
+    private val _spoonacularRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+
     val recipeFeed: StateFlow<List<RecipeWithUser>> = combine(
         repository.localRecipesWithUserFlow,
-        spoonacularFlow
+        _spoonacularRecipes
     ) { local, remote ->
-        val fakeUser: User = User("Spoonacular", "Spoonacular", "Spoonacular", "https://play-lh.googleusercontent.com/uOZlIZUJ7R79qs_J_a9cdxrJaGhHwqKTmika25Lp1vTeC1qe9lPQF5jalEFc8Htk7nQ")
-        val remoteWrapped = remote.map { recipe ->
-            RecipeWithUser(recipe = recipe, user = fakeUser)
-        }
+        val remoteWrapped = repository.wrapSpoonacularRecipes(remote)
         local + remoteWrapped
     }.stateIn(
         viewModelScope,
@@ -42,15 +36,30 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
         emptyList()
     )
 
-    fun fetchSpoonacularRecipes(count: Int = 10) {
+    init {
+        viewModelScope.launch {
+            fetchAllData()
+        }
+
+        viewModelScope.launch {
+            recipeFeed.collect { recipes ->
+                if (recipes.isEmpty() && _isRefreshing.value) {
+                    _uiState.value = FeedUiState.Loading
+                } else {
+                    _uiState.value = FeedUiState.Success(recipes)
+                }
+            }
+        }
+    }
+
+    fun fetchAllData() {
         viewModelScope.launch {
             try {
-                val apiKey: String = "165c6099f12842b1b3996b779d6fd6ef"
                 _isRefreshing.value = true
-                val response = spoonacularApi.getRandomRecipes(count, apiKey)
-                val fetched = response.recipes.map { it.toAppRecipe() }
-                _spoonacularFlow.value = fetched
+                repository.refreshRecipesFromRemote()
+                fetchSpoonacularRecipes()
             } catch (e: Exception) {
+                _uiState.value = FeedUiState.Error("Failed to refresh data: ${e.localizedMessage}")
                 e.printStackTrace()
             } finally {
                 _isRefreshing.value = false
@@ -58,31 +67,27 @@ class FeedViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    init {
+    private fun fetchSpoonacularRecipes(count: Int = 10) {
         viewModelScope.launch {
-            fetchAllData()
-        }
-    }
-
-    fun fetchAllData() {
-        viewModelScope.launch {
-            repository.refreshRecipesFromRemote()
-            fetchSpoonacularRecipes()
+            try {
+                val recipes = repository.getSpoonacularRecipes(count)
+                _spoonacularRecipes.value = recipes
+            } catch (e: Exception) {
+                _uiState.value = FeedUiState.Error("Failed to fetch spoonacular recipes: ${e.localizedMessage}")
+                e.printStackTrace()
+            }
         }
     }
 
     fun toggleLike(recipe: Recipe) {
         viewModelScope.launch {
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
-            val updatedLikes = if (recipe.likes.contains(currentUserId)) {
-                recipe.likes - currentUserId
-            } else {
-                recipe.likes + currentUserId
+            try {
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
+                repository.toggleLike(recipe, currentUserId)
+            } catch (e: Exception) {
+                _uiState.value = FeedUiState.Error("Failed to toggle like: ${e.localizedMessage}")
+                e.printStackTrace()
             }
-            val updatedRecipe = recipe.copy(likes = updatedLikes)
-            repository.insertRecipe(updatedRecipe.toEntity())
-            remoteDataSource.updateRecipeLikes(recipe.id, updatedLikes)
         }
-
     }
 }

@@ -3,10 +3,6 @@ package com.example.cookup.room
 import com.example.cookup.models.Recipe
 import com.example.cookup.models.User
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class RecipeRemoteDataSource {
@@ -24,21 +20,21 @@ class RecipeRemoteDataSource {
         }
     }
 
-    fun fetchRecipes(): Flow<List<Recipe>> = callbackFlow {
-        val listener = db.collection(RECIPES_COLLECTION)
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null || snapshot == null) {
-                    close(error)
-                    return@addSnapshotListener
-                }
+    suspend fun fetchRecipes(): List<Recipe>? {
+        return try {
+            val snapshot = db.collection(RECIPES_COLLECTION)
+                .get()
+                .await()
 
-                val recipes = snapshot.documents.mapNotNull { it.toObject(Recipe::class.java) }
-                trySend(recipes)
-            }
-
-        awaitClose { listener.remove() }
+            snapshot.documents.mapNotNull { it.toObject(Recipe::class.java) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
+
+
+
 
     suspend fun getUserById(userId: String): User? {
         return try {
